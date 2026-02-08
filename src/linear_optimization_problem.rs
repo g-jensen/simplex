@@ -51,32 +51,31 @@ impl OptimizationProblem {
 }
 
 fn equality_constraints(functional_constraints: &Vec<UpperBoundConstraint>) -> Vec<Equation> {
-    let count = functional_constraints.len();
+    let len = functional_constraints.len();
     functional_constraints
         .iter().enumerate()
-        .map(|(idx, constraint)| equality_constraint(idx, constraint, count))
+        .map(|(var, constraint)| equality_constraint(constraint, var, len))
         .collect()
 }
 
 fn equality_constraint(
-    constraint_index: usize,
-    bound_constraint: &UpperBoundConstraint, 
-    constraint_count: usize) -> Equation {
-        let coeffs = &bound_constraint.coefficients;
-        let coeffs = with_slack_variable(constraint_index, coeffs, constraint_count);
+    constraint: &UpperBoundConstraint, 
+    target_var: Variable,
+    basic_var_count: usize) -> Equation {
+        let coeffs = &constraint.coefficients;
         Equation{
-            coefficients: coeffs,
-            constraint: bound_constraint.constraint
+            coefficients: with_slack_variable(coeffs, target_var, basic_var_count),
+            constraint: constraint.constraint
         }
 }
 
 fn with_slack_variable(
-    constraint_index: usize, 
     coefficients: &Vec<Value>,
-    constraint_count: usize) -> Vec<Value> {
+    target_var: Variable, 
+    basic_var_count: usize) -> Vec<Value> {
         let mut coeffs = coefficients.clone();
-        for i in 0..constraint_count {
-            coeffs.push(if i == constraint_index {1_f32} else {0_f32});
+        for var in 0..basic_var_count {
+            coeffs.push(if var == target_var {1_f32} else {0_f32});
         }
         coeffs
 }
