@@ -1,3 +1,5 @@
+use std::ops::Neg;
+
 pub type Value = f32;
 pub type Coefficients = Vec<Value>;
 
@@ -9,13 +11,46 @@ pub struct UpperBoundConstraint {
 pub fn solve_standard_problem(
     objective_function: &Coefficients, 
     functional_constraints: &Vec<UpperBoundConstraint>) -> Vec<Value> {
-        let mut problem = SimplexProblem::new(objective_function,functional_constraints);
-        let variable_count = objective_function.len();
-        let mut solns = vec![0_f32; variable_count];
-        for var in 0..variable_count {
-            solns[var] = next_maximal_val(var,&mut problem.equations);
-        }
-        solns
+        let problem = SimplexProblem::new(objective_function,functional_constraints);
+        let mut solution = solve_simplex_problem(problem);
+        solution.truncate(objective_function.len());
+        solution
+        // let variable_count = objective_function.len();
+        // let mut solns = vec![0_f32; variable_count];
+        // for var in 0..variable_count {
+        //     solns[var] = next_maximal_val(var,&mut problem.equations);
+        // }
+        // solns
+}
+
+fn solve_simplex_problem(problem: SimplexProblem) -> Vec<Value> {
+    if is_optimal(&problem) {
+        return problem.point;
+    }
+    let Some(pivot_column) = pivot_column(&problem) else {
+        return problem.point;
+    };
+    let Some(pivot_row) = pivot_row(&problem,pivot_column) else {
+        return problem.point;
+    };
+}
+
+fn is_optimal(problem: &SimplexProblem) -> bool {
+    problem.objective_function.iter().all(|v| !v.is_sign_positive())
+}
+
+fn pivot_column(problem: &SimplexProblem) -> Option<Variable> {
+    problem.objective_function.iter().enumerate()
+        .max_by(|(_, v1),(_, v2)| v1.total_cmp(v2))
+        .unzip().0
+}
+
+fn pivot_row(problem: &SimplexProblem, pivot_column: Variable) -> Option<Variable> {
+    problem.equations.iter().enumerate()
+        .map(|(i, row)| (i, row.constraint / row.coefficients[pivot_column]))
+        .filter(|(_, ratio)| *ratio > 0_f32)
+        .min_by(|(_, r1),(_, r2)| r1.total_cmp(r2))
+        .unzip().0
 }
 
 type Variable = usize;
