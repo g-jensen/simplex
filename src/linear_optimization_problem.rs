@@ -1,7 +1,6 @@
 pub type Value = f32;
 pub type Coefficients = Vec<Value>;
 
-#[derive(Clone)]
 pub struct UpperBoundConstraint {
     coefficients: Coefficients,
     bound: Value
