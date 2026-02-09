@@ -7,12 +7,6 @@ pub struct UpperBoundConstraint {
     bound: Value
 }
 
-impl UpperBoundConstraint {
-    pub fn new(coefficients: &Coefficients, bound: Value) -> Self {
-        Self {coefficients: coefficients.clone(), bound}
-    }
-}
-
 pub fn solve_standard_problem(
     objective_function: &Coefficients, 
     functional_constraints: &Vec<UpperBoundConstraint>) -> Vec<Value> {
