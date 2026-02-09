@@ -16,11 +16,11 @@ impl UpperBoundConstraint {
 pub fn solve_standard_problem(
     objective_function: &Coefficients, 
     functional_constraints: &Vec<UpperBoundConstraint>) -> Vec<Value> {
-        let mut equality_constraints = equality_constraints(functional_constraints);
+        let mut problem = SimplexProblem::new(objective_function,functional_constraints);
         let variable_count = objective_function.len();
         let mut solns = vec![0_f32; variable_count];
         for var in 0..variable_count {
-            solns[var] = next_maximal_val(var,&mut equality_constraints);
+            solns[var] = next_maximal_val(var,&mut problem.equations);
         }
         solns
 }
@@ -34,20 +34,31 @@ struct Equation {
     constraint: Value
 }
 
-struct OptimizationProblem {
+struct SimplexProblem {
     objective_function: Coefficients,
-    functional_constraints: Vec<Equation>,
-    basic_variables: Vec<Variable>
+    equations: Vec<Equation>,
+    point: Vec<Value>
 }
 
-impl OptimizationProblem {
+impl SimplexProblem {
     pub fn new(objective_function: &Coefficients, functional_constraints: &Vec<UpperBoundConstraint>) -> Self {
         Self {
             objective_function: objective_function.clone(),
-            functional_constraints: equality_constraints(functional_constraints),
-            basic_variables: Vec::new()
+            equations: equality_constraints(functional_constraints),
+            point: initial_point(functional_constraints)
         }
     }
+}
+
+fn initial_point(constraints: &Vec<UpperBoundConstraint>) -> Vec<Value> {
+    let mut point = vec![];
+    if constraints.len() > 0 {
+        point = vec![0_f32; constraints[0].coefficients.len()];
+        for constraint in constraints {
+            point.push(constraint.constraint);
+        }
+    }
+    point
 }
 
 fn equality_constraints(functional_constraints: &Vec<UpperBoundConstraint>) -> Vec<Equation> {
