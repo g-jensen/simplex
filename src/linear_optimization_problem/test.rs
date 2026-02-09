@@ -110,7 +110,7 @@ mod tests {
             let ub_constraints = vec![
                 sut::UpperBoundConstraint {
                     coefficients: vec![1_f32],
-                    constraint: 5_f32
+                    bound: 5_f32
                 }
             ];
             let point = sut::initial_point(&ub_constraints);
@@ -123,7 +123,7 @@ mod tests {
             let ub_constraints = vec![
                 sut::UpperBoundConstraint {
                     coefficients: vec![1_f32, 2_f32],
-                    constraint: 6_f32
+                    bound: 6_f32
                 }
             ];
             let point = sut::initial_point(&ub_constraints);
@@ -136,11 +136,11 @@ mod tests {
             let ub_constraints = vec![
                 sut::UpperBoundConstraint {
                     coefficients: vec![1_f32, 2_f32],
-                    constraint: 6_f32
+                    bound: 6_f32
                 },
                 sut::UpperBoundConstraint {
                     coefficients: vec![3_f32, 4_f32],
-                    constraint: 7_f32
+                    bound: 7_f32
                 }
             ];
             let point = sut::initial_point(&ub_constraints);
@@ -165,7 +165,7 @@ mod tests {
             let ub_constraints = vec![
                 sut::UpperBoundConstraint {
                     coefficients: vec![1_f32],
-                    constraint: 5_f32
+                    bound: 5_f32
                 }
             ];
             let eq_constraints = sut::equality_constraints(&ub_constraints);
@@ -183,7 +183,7 @@ mod tests {
             let ub_constraints = vec![
                 sut::UpperBoundConstraint {
                     coefficients: vec![1_f32, 2_f32],
-                    constraint: 5_f32
+                    bound: 5_f32
                 }
             ];
             let eq_constraints = sut::equality_constraints(&ub_constraints);
@@ -201,11 +201,11 @@ mod tests {
             let ub_constraints = vec![
                 sut::UpperBoundConstraint{
                     coefficients: vec![1_f32, 2_f32],
-                    constraint: 5_f32
+                    bound: 5_f32
                 },
                 sut::UpperBoundConstraint{
                     coefficients: vec![3_f32, 4_f32],
-                    constraint: 10_f32
+                    bound: 10_f32
                 }
             ];
             let eq_constraints = sut::equality_constraints(&ub_constraints);

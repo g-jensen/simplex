@@ -4,12 +4,12 @@ pub type Coefficients = Vec<Value>;
 #[derive(Clone)]
 pub struct UpperBoundConstraint {
     coefficients: Coefficients,
-    constraint: Value
+    bound: Value
 }
 
 impl UpperBoundConstraint {
-    pub fn new(coefficients: &Coefficients, constraint: Value) -> Self {
-        Self {coefficients: coefficients.clone(), constraint: constraint}
+    pub fn new(coefficients: &Coefficients, bound: Value) -> Self {
+        Self {coefficients: coefficients.clone(), bound}
     }
 }
 
@@ -55,7 +55,7 @@ fn initial_point(constraints: &Vec<UpperBoundConstraint>) -> Vec<Value> {
     if constraints.len() > 0 {
         point = vec![0_f32; constraints[0].coefficients.len()];
         for constraint in constraints {
-            point.push(constraint.constraint);
+            point.push(constraint.bound);
         }
     }
     point
@@ -76,7 +76,7 @@ fn equality_constraint(
         let coeffs = &constraint.coefficients;
         Equation{
             coefficients: with_slack_variable(coeffs, target_var, basic_var_count),
-            constraint: constraint.constraint
+            constraint: constraint.bound
         }
 }
 
