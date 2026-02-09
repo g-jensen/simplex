@@ -27,25 +27,40 @@ fn solve_simplex_problem(problem: SimplexProblem) -> Vec<Value> {
     if is_optimal(&problem) {
         return problem.point;
     }
-    let Some(pivot_column) = pivot_column(&problem) else {
+    let Some(pivot_variable) = pivot_variable(&problem) else {
         return problem.point;
     };
-    let Some(pivot_row) = pivot_row(&problem,pivot_column) else {
+    let Some(pivot_equation) = pivot_equation(&problem,pivot_variable) else {
         return problem.point;
     };
+    normalize_equation(&mut problem,pivot_equation,pivot_variable);
+    reduce_equations(&mut problem,pivot_equation,pivot_variable);
+}
+
+fn reduce_equations(problem: &mut SimplexProblem, equation: usize, variable: Variable) {
+    
+}
+
+fn normalize_equation(problem: &mut SimplexProblem, equation: usize, variable: Variable) {
+    let ref mut coeffs = problem.equations[equation].coefficients;
+    let coeff = coeffs[variable];
+    let var_count = coeffs.len();
+    for var in  0..var_count {
+        coeffs[var] /= coeff;
+    }
 }
 
 fn is_optimal(problem: &SimplexProblem) -> bool {
     problem.objective_function.iter().all(|v| !v.is_sign_positive())
 }
 
-fn pivot_column(problem: &SimplexProblem) -> Option<Variable> {
+fn pivot_variable(problem: &SimplexProblem) -> Option<Variable> {
     problem.objective_function.iter().enumerate()
         .max_by(|(_, v1),(_, v2)| v1.total_cmp(v2))
         .unzip().0
 }
 
-fn pivot_row(problem: &SimplexProblem, pivot_column: Variable) -> Option<Variable> {
+fn pivot_equation(problem: &SimplexProblem, pivot_column: Variable) -> Option<usize> {
     problem.equations.iter().enumerate()
         .map(|(i, row)| (i, row.constraint / row.coefficients[pivot_column]))
         .filter(|(_, ratio)| *ratio > 0_f32)
