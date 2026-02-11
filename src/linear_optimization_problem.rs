@@ -17,7 +17,6 @@ pub fn solve_standard_problem(
 
 fn solve_simplex_problem(mut problem: SimplexProblem) -> Vec<Value> {
     if is_optimal(&problem) {
-        // println!("{:#?}",problem);
         return problem.point;
     }
     let Some(pivot_variable) = pivot_variable(&problem) else {
@@ -27,13 +26,10 @@ fn solve_simplex_problem(mut problem: SimplexProblem) -> Vec<Value> {
     let Some(pivot_row_idx) = pivot_row_idx(&problem) else {
         return problem.point;
     };
-    problem.rows[pivot_row_idx].basic_variable = pivot_variable;
+    set_basic_variable(&mut problem,pivot_row_idx,pivot_variable);
     normalize_equation(&mut problem,pivot_row_idx,pivot_variable);
     reduce_equations(&mut problem,pivot_row_idx,pivot_variable);
-    problem.point.fill(0_f32);
-    for row in problem.rows.iter() {
-        problem.point[row.basic_variable] = row.equation.coefficients[row.basic_variable]
-    }
+    set_new_point(&mut problem);
     solve_simplex_problem(problem)
 }
 
@@ -60,6 +56,10 @@ fn pivot_row_idx(problem: &SimplexProblem) -> Option<usize> {
         .unzip().0
 }
 
+fn set_basic_variable(problem: &mut SimplexProblem, var_idx: usize, new_var: usize) {
+    problem.rows[var_idx].basic_variable = new_var;
+}
+
 fn normalize_equation(problem: &mut SimplexProblem, equation_idx: usize, variable: Variable) {
     let coeffs = &mut problem.rows[equation_idx].equation.coefficients;
     let coeff = coeffs[variable];
@@ -80,6 +80,13 @@ fn reduce_equations(problem: &mut SimplexProblem, pivot_row_idx: usize, variable
         reduce_equation(&mut row.equation,&pivot_row.equation,variable);
     }
     reduce_equation(&mut problem.objective_equation,&pivot_row.equation,variable);
+}
+
+fn set_new_point(problem: &mut SimplexProblem) {
+    problem.point.fill(0_f32);
+    for row in problem.rows.iter() {
+        problem.point[row.basic_variable] = row.equation.coefficients[row.basic_variable]
+    }
 }
 
 fn iter_around_mut<T>(slice: &mut [T], index: usize) -> (&mut T, impl Iterator<Item = &mut T>) {
