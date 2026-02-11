@@ -93,14 +93,13 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn maximizes_two_dependent_variable_two_constraint_symmetric_problem() {
         let objective_function = vec![1_f32, 1_f32];
         let fn_constaint_0 = upper_bound_constraint(vec![1_f32, 2_f32], 3_f32);
         let fn_constaint_1 = upper_bound_constraint(vec![2_f32, 1_f32], 3_f32);
         let fn_constraints = vec![fn_constaint_0, fn_constaint_1];
         let solns = sut::solve_standard_problem(&objective_function, &fn_constraints);
-        let expected_solns = vec![2_f32, 2_f32];
+        let expected_solns = vec![1_f32, 1_f32];
         assert_eq!(expected_solns, solns);
     }
 
@@ -172,7 +171,7 @@ mod tests {
         }
 
         #[test]
-        fn positive_objective_is_not_optimal() {
+        fn positive_objective_is_optimal() {
             let problem = sut::SimplexProblem {
                 objective_equation: sut::Equation {
                     coefficients: vec![1_f32],
@@ -181,7 +180,7 @@ mod tests {
                 rows: vec![],
                 point: vec![],
             };
-            assert!(!sut::is_optimal(&problem));
+            assert!(sut::is_optimal(&problem));
         }
 
         #[test]
@@ -198,10 +197,23 @@ mod tests {
         }
 
         #[test]
-        fn positive_and_zero_objective_is_not_optimal() {
+        fn positive_and_zero_objective_is_optimal() {
             let problem = sut::SimplexProblem {
                 objective_equation: sut::Equation {
                     coefficients: vec![1_f32, 0_f32],
+                    constraint: 0_f32,
+                },
+                rows: vec![],
+                point: vec![],
+            };
+            assert!(sut::is_optimal(&problem));
+        }
+
+        #[test]
+        fn negative_objective_is_not_optimal() {
+            let problem = sut::SimplexProblem {
+                objective_equation: sut::Equation {
+                    coefficients: vec![-1_f32],
                     constraint: 0_f32,
                 },
                 rows: vec![],
@@ -211,20 +223,7 @@ mod tests {
         }
 
         #[test]
-        fn negative_objective_is_optimal() {
-            let problem = sut::SimplexProblem {
-                objective_equation: sut::Equation {
-                    coefficients: vec![-1_f32],
-                    constraint: 0_f32,
-                },
-                rows: vec![],
-                point: vec![],
-            };
-            assert!(sut::is_optimal(&problem));
-        }
-
-        #[test]
-        fn no_positives_in_objective_is_optimal() {
+        fn one_negative_in_objective_is_not_optimal() {
             let problem = sut::SimplexProblem {
                 objective_equation: sut::Equation {
                     coefficients: vec![-1_f32, 0_f32],
@@ -233,7 +232,7 @@ mod tests {
                 rows: vec![],
                 point: vec![],
             };
-            assert!(sut::is_optimal(&problem));
+            assert!(!sut::is_optimal(&problem));
         }
     }
 
@@ -267,10 +266,10 @@ mod tests {
         }
 
         #[test]
-        fn biggest_var_is_pivot() {
+        fn smallest_var_is_pivot() {
             let problem = sut::SimplexProblem {
                 objective_equation: sut::Equation {
-                    coefficients: vec![1_f32, 2_f32, 0_f32],
+                    coefficients: vec![1_f32, -2_f32, 0_f32],
                     constraint: 0_f32,
                 },
                 rows: vec![],

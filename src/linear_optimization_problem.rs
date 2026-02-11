@@ -1,5 +1,3 @@
-use core::error;
-
 pub type Value = f32;
 pub type Coefficients = Vec<Value>;
 
@@ -11,26 +9,41 @@ pub struct UpperBoundConstraint {
 pub fn solve_standard_problem(
     objective_fn_coeffs: &Coefficients, 
     functional_constraints: &Vec<UpperBoundConstraint>) -> Vec<Value> {
-        let mut problem = SimplexProblem::new(objective_fn_coeffs,functional_constraints);
-        let mut equations = problem.rows.iter_mut().map(|r| r.equation.clone()).collect();
-        // let mut solution = solve_simplex_problem(problem);
-        // solution.truncate(objective_fn_coeffs.len());
-        // solution
-        let variable_count = objective_fn_coeffs.len();
-        let mut soln = vec![0_f32; variable_count];
-        for var in 0..variable_count {
-            soln[var] = next_maximal_val(var,&mut equations);
-        }
-        soln
+        let problem = SimplexProblem::new(objective_fn_coeffs,functional_constraints);
+        let mut solution = solve_simplex_problem(problem);
+        solution.truncate(objective_fn_coeffs.len());
+        solution
+}
+
+fn solve_simplex_problem(mut problem: SimplexProblem) -> Vec<Value> {
+    if is_optimal(&problem) {
+        // println!("{:#?}",problem);
+        return problem.point;
+    }
+    let Some(pivot_variable) = pivot_variable(&problem) else {
+        return problem.point;
+    };
+    set_ratios(&mut problem,pivot_variable);
+    let Some(pivot_row_idx) = pivot_row_idx(&problem) else {
+        return problem.point;
+    };
+    problem.rows[pivot_row_idx].basic_variable = pivot_variable;
+    normalize_equation(&mut problem,pivot_row_idx,pivot_variable);
+    reduce_equations(&mut problem,pivot_row_idx,pivot_variable);
+    problem.point.fill(0_f32);
+    for row in problem.rows.iter() {
+        problem.point[row.basic_variable] = row.equation.coefficients[row.basic_variable]
+    }
+    solve_simplex_problem(problem)
 }
 
 fn is_optimal(problem: &SimplexProblem) -> bool {
-    problem.objective_equation.coefficients.iter().all(|v| *v <= 0_f32)
+    problem.objective_equation.coefficients.iter().all(|v| *v >= 0_f32)
 }
 
 fn pivot_variable(problem: &SimplexProblem) -> Option<Variable> {
     problem.objective_equation.coefficients.iter().enumerate()
-        .max_by(|(_, v1),(_, v2)| v1.total_cmp(v2))
+        .min_by(|(_, v1),(_, v2)| v1.total_cmp(v2))
         .unzip().0
 }
 
@@ -58,10 +71,11 @@ fn normalize_equation(problem: &mut SimplexProblem, equation_idx: usize, variabl
             coeffs[var] /= coeff;
         }
     }
+    problem.rows[equation_idx].equation.constraint /= coeff;
 }
 
-fn reduce_equations(problem: &mut SimplexProblem, pivot_equation_idx: usize, variable: Variable) {
-    let (pivot_row, other_rows) = iter_around_mut(&mut problem.rows, pivot_equation_idx);
+fn reduce_equations(problem: &mut SimplexProblem, pivot_row_idx: usize, variable: Variable) {
+    let (pivot_row, other_rows) = iter_around_mut(&mut problem.rows, pivot_row_idx);
     for row in other_rows {
         reduce_equation(&mut row.equation,&pivot_row.equation,variable);
     }
@@ -100,6 +114,7 @@ struct SimplexRow {
     ratio: Value
 }
 
+#[derive(Debug)]
 struct SimplexProblem {
     objective_equation: Equation,
     rows: Vec<SimplexRow>,
@@ -109,10 +124,23 @@ struct SimplexProblem {
 impl SimplexProblem {
     pub fn new(objective_fn_coeffs: &Coefficients, functional_constraints: &Vec<UpperBoundConstraint>) -> Self {
         Self {
-            objective_equation: Equation{coefficients: objective_fn_coeffs.clone(), constraint: 0_f32},
+            objective_equation: initial_objective_equation(objective_fn_coeffs,objective_fn_coeffs.len()),
+            // objective_equation: Equation{coefficients: objective_fn_coeffs.clone(), constraint: 0_f32},
             rows: initial_rows(&functional_constraints,objective_fn_coeffs.len()),
             point: initial_point(functional_constraints),
         }
+    }
+}
+
+fn initial_objective_equation(objective_fn_coeffs: &Coefficients, nonbasic_var_count: usize) -> Equation {
+    let mut coefficients = objective_fn_coeffs.clone();
+    for coeff in &mut coefficients {
+        *coeff = -*coeff;
+    }
+    coefficients.append(&mut vec![0_f32;nonbasic_var_count]);
+    Equation{
+        coefficients: coefficients, 
+        constraint: 0_f32
     }
 }
 
@@ -120,7 +148,7 @@ fn initial_rows(functional_constraints: &Vec<UpperBoundConstraint>, nonbasic_var
     let mut rows = vec![];
     for (var, constraint) in functional_constraints.iter().enumerate() {
         let row = SimplexRow {
-            basic_variable: nonbasic_var_count+var+1,
+            basic_variable: nonbasic_var_count+var,
             equation: equality_constraint(constraint,var,functional_constraints.len()),
             ratio: 0_f32
         };
