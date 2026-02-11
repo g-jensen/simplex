@@ -1,3 +1,5 @@
+use std::f32::INFINITY;
+
 pub type Value = f32;
 pub type Coefficients = Vec<Value>;
 
@@ -10,6 +12,7 @@ pub fn solve_standard_problem(
     objective_fn_coeffs: &Coefficients, 
     functional_constraints: &Vec<UpperBoundConstraint>) -> Vec<Value> {
         let problem = SimplexProblem::new(objective_fn_coeffs,functional_constraints);
+        if functional_constraints.len() == 0 {return problem.point}
         let mut solution = solve_simplex_problem(problem);
         solution.truncate(objective_fn_coeffs.len());
         solution
@@ -51,7 +54,7 @@ fn set_ratios(problem: &mut SimplexProblem, pivot_column: Variable) {
 
 fn pivot_row_idx(problem: &SimplexProblem) -> Option<usize> {
     problem.rows.iter().enumerate()
-        .filter(|(_, row)| row.ratio > 0_f32)
+        .filter(|(_, row)| row.ratio > 0_f32 && row.ratio != INFINITY)
         .min_by(|(_, r1),(_, r2)| r1.ratio.total_cmp(&r2.ratio))
         .unzip().0
 }
@@ -85,7 +88,7 @@ fn reduce_equations(problem: &mut SimplexProblem, pivot_row_idx: usize, variable
 fn set_new_point(problem: &mut SimplexProblem) {
     problem.point.fill(0_f32);
     for row in problem.rows.iter() {
-        problem.point[row.basic_variable] = row.equation.coefficients[row.basic_variable]
+        problem.point[row.basic_variable] = row.equation.constraint;
     }
 }
 
@@ -131,10 +134,9 @@ struct SimplexProblem {
 impl SimplexProblem {
     pub fn new(objective_fn_coeffs: &Coefficients, functional_constraints: &Vec<UpperBoundConstraint>) -> Self {
         Self {
-            objective_equation: initial_objective_equation(objective_fn_coeffs,objective_fn_coeffs.len()),
-            // objective_equation: Equation{coefficients: objective_fn_coeffs.clone(), constraint: 0_f32},
+            objective_equation: initial_objective_equation(objective_fn_coeffs,functional_constraints.len()),
             rows: initial_rows(&functional_constraints,objective_fn_coeffs.len()),
-            point: initial_point(functional_constraints),
+            point: initial_point(objective_fn_coeffs,functional_constraints),
         }
     }
 }
@@ -196,13 +198,10 @@ fn with_slack_variable(
         coeffs
 }
 
-fn initial_point(constraints: &Vec<UpperBoundConstraint>) -> Vec<Value> {
-    let mut point = vec![];
-    if constraints.len() > 0 {
-        point = vec![0_f32; constraints[0].coefficients.len()];
-        for constraint in constraints {
-            point.push(constraint.bound);
-        }
+fn initial_point(objective_fn_coeffs: &Coefficients, constraints: &Vec<UpperBoundConstraint>) -> Vec<Value> {
+    let mut point = vec![0_f32; objective_fn_coeffs.len()];
+    for constraint in constraints {
+        point.push(constraint.bound);
     }
     point
 }
