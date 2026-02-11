@@ -166,16 +166,6 @@ fn initial_rows(functional_constraints: &Vec<UpperBoundConstraint>, nonbasic_var
     rows
 }
 
-fn initial_basic_variables(initial_point: &Vec<Value>) -> Vec<Variable> {
-    let mut basic_variables = Vec::new();
-    for (i, v) in initial_point.iter().enumerate() {
-        if *v != 0_f32 {
-            basic_variables.push(i);
-        }
-    }
-    basic_variables
-}
-
 fn equality_constraint(
     constraint: &UpperBoundConstraint, 
     target_var: Variable,
@@ -204,21 +194,6 @@ fn initial_point(objective_fn_coeffs: &Coefficients, constraints: &Vec<UpperBoun
         point.push(constraint.bound);
     }
     point
-}
-
-fn next_maximal_val(variable: Variable, constraints: &mut Vec<Equation>) -> Value {
-    constraints.iter_mut()
-        .filter(|constraint| constraint.coefficients[variable] != 0_f32)
-        .map(|constraint| maximal_val(variable,constraint))
-        .min_by(|a,b| a.total_cmp(b))
-        .unwrap_or(0_f32)
-}
-
-fn maximal_val(variable: Variable, constraint: &mut Equation) -> Value {
-    let upper_bound = constraint.constraint;
-    let coeff = constraint.coefficients[variable];
-    constraint.constraint -= upper_bound; // eventually remove i think
-    upper_bound / coeff
 }
 
 #[cfg(test)]
