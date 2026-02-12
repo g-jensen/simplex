@@ -109,21 +109,20 @@ fn initial_point(objective_fn_coeffs: &Coefficients, constraints: &Vec<UpperBoun
 }
 
 fn solve_simplex_problem(mut problem: SimplexProblem) -> Vec<Value> {
-    if is_optimal(&problem) {
-        return problem.point;
+    while !is_optimal(&problem) {
+        let Some(pivot_variable) = pivot_variable(&problem) else {
+            return problem.point;
+        };
+        set_ratios(&mut problem,pivot_variable);
+        let Some(pivot_row_idx) = pivot_row_idx(&problem) else {
+            return problem.point;
+        };
+        set_basic_variable(&mut problem,pivot_row_idx,pivot_variable);
+        normalize_equation(&mut problem,pivot_row_idx,pivot_variable);
+        reduce_equations(&mut problem,pivot_row_idx,pivot_variable);
+        set_new_point(&mut problem);
     }
-    let Some(pivot_variable) = pivot_variable(&problem) else {
-        return problem.point;
-    };
-    set_ratios(&mut problem,pivot_variable);
-    let Some(pivot_row_idx) = pivot_row_idx(&problem) else {
-        return problem.point;
-    };
-    set_basic_variable(&mut problem,pivot_row_idx,pivot_variable);
-    normalize_equation(&mut problem,pivot_row_idx,pivot_variable);
-    reduce_equations(&mut problem,pivot_row_idx,pivot_variable);
-    set_new_point(&mut problem);
-    solve_simplex_problem(problem)
+    return problem.point;
 }
 
 fn is_optimal(problem: &SimplexProblem) -> bool {
