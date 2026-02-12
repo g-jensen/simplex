@@ -33,7 +33,7 @@ struct TabularSimplex {
     point: Vec<Value>,
 }
 
-pub fn solve_simplex(
+pub fn solve(
     objective_fn_coeffs: &Coefficients, 
     functional_constraints: &Vec<UpperBoundConstraint>) -> Vec<Value> {
         let problem = TabularSimplex::new(objective_fn_coeffs,functional_constraints);
