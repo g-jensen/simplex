@@ -1,5 +1,5 @@
 mod pivot_row_idx {
-    use crate::linear_optimization_problem::{self as sut};
+    use crate::simplex::{self as sut};
 
     #[test]
     fn returns_none_for_no_rows() {

@@ -1,4 +1,4 @@
-use crate::linear_optimization_problem::{self as sut};
+use crate::simplex::{self as sut};
 
 fn upper_bound_constraint(
     coefficients: sut::Coefficients,

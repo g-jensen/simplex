@@ -1,5 +1,5 @@
 mod is_optimal {
-    use crate::linear_optimization_problem::{self as sut};
+    use crate::simplex::{self as sut};
 
     #[test]
     fn empty_objective_is_optimal() {

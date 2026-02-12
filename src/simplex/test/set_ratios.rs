@@ -1,5 +1,5 @@
 mod set_ratios {
-    use crate::linear_optimization_problem::{self as sut};
+    use crate::simplex::{self as sut};
 
     #[test]
     fn recalculates_ratio_for_row() {

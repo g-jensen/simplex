@@ -1,6 +1,6 @@
-mod linear_optimization_problem;
+mod simplex;
 
 fn main() {
-    let _f = linear_optimization_problem::solve_simplex;
+    let _f = simplex::solve_simplex;
     println!("Hello, world!");
 }
