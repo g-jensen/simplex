@@ -3,7 +3,7 @@ mod reduce_equations {
 
     #[test]
     fn reduces_objective_equation() {
-        let mut problem = sut::SimplexProblem {
+        let mut problem = sut::TabularSimplex {
             objective_equation: sut::Equation {
                 coefficients: vec![3_f32, 2_f32],
                 constraint: 0_f32,
@@ -28,7 +28,7 @@ mod reduce_equations {
 
     #[test]
     fn leaves_pivot_row_unchanged() {
-        let mut problem = sut::SimplexProblem {
+        let mut problem = sut::TabularSimplex {
             objective_equation: sut::Equation {
                 coefficients: vec![1_f32, 1_f32],
                 constraint: 0_f32,
@@ -50,7 +50,7 @@ mod reduce_equations {
 
     #[test]
     fn reduces_non_pivot_row() {
-        let mut problem = sut::SimplexProblem {
+        let mut problem = sut::TabularSimplex {
             objective_equation: sut::Equation {
                 coefficients: vec![0_f32, 0_f32],
                 constraint: 0_f32,
@@ -82,7 +82,7 @@ mod reduce_equations {
 
     #[test]
     fn reduces_multiple_non_pivot_rows() {
-        let mut problem = sut::SimplexProblem {
+        let mut problem = sut::TabularSimplex {
             objective_equation: sut::Equation {
                 coefficients: vec![0_f32, 0_f32],
                 constraint: 0_f32,
@@ -126,7 +126,7 @@ mod reduce_equations {
 
     #[test]
     fn reduces_on_non_first_variable() {
-        let mut problem = sut::SimplexProblem {
+        let mut problem = sut::TabularSimplex {
             objective_equation: sut::Equation {
                 coefficients: vec![2_f32, 4_f32],
                 constraint: 0_f32,

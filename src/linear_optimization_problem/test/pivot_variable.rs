@@ -3,7 +3,7 @@ mod pivot_variable {
 
     #[test]
     fn empty_objective_has_no_pivot() {
-        let problem = sut::SimplexProblem {
+        let problem = sut::TabularSimplex {
             objective_equation: sut::Equation {
                 coefficients: vec![],
                 constraint: 0_f32,
@@ -16,7 +16,7 @@ mod pivot_variable {
 
     #[test]
     fn single_var_is_pivot() {
-        let problem = sut::SimplexProblem {
+        let problem = sut::TabularSimplex {
             objective_equation: sut::Equation {
                 coefficients: vec![1_f32],
                 constraint: 0_f32,
@@ -29,7 +29,7 @@ mod pivot_variable {
 
     #[test]
     fn smallest_var_is_pivot() {
-        let problem = sut::SimplexProblem {
+        let problem = sut::TabularSimplex {
             objective_equation: sut::Equation {
                 coefficients: vec![1_f32, -2_f32, 0_f32],
                 constraint: 0_f32,

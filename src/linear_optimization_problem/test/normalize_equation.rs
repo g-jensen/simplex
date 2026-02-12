@@ -3,7 +3,7 @@ mod normalize_equation {
 
     #[test]
     fn sets_single_coefficient_to_one() {
-        let mut problem = sut::SimplexProblem {
+        let mut problem = sut::TabularSimplex {
             objective_equation: sut::Equation {
                 coefficients: vec![],
                 constraint: 0_f32,
@@ -24,7 +24,7 @@ mod normalize_equation {
 
     #[test]
     fn divides_other_coefficients_by_pivot() {
-        let mut problem = sut::SimplexProblem {
+        let mut problem = sut::TabularSimplex {
             objective_equation: sut::Equation {
                 coefficients: vec![],
                 constraint: 0_f32,
@@ -48,7 +48,7 @@ mod normalize_equation {
 
     #[test]
     fn normalizes_on_non_first_variable() {
-        let mut problem = sut::SimplexProblem {
+        let mut problem = sut::TabularSimplex {
             objective_equation: sut::Equation {
                 coefficients: vec![],
                 constraint: 0_f32,
@@ -72,7 +72,7 @@ mod normalize_equation {
 
     #[test]
     fn leaves_other_coefficients_unchanged_when_pivot_is_one() {
-        let mut problem = sut::SimplexProblem {
+        let mut problem = sut::TabularSimplex {
             objective_equation: sut::Equation {
                 coefficients: vec![],
                 constraint: 0_f32,
@@ -96,7 +96,7 @@ mod normalize_equation {
 
     #[test]
     fn normalizes_correct_row_when_multiple_rows_exist() {
-        let mut problem = sut::SimplexProblem {
+        let mut problem = sut::TabularSimplex {
             objective_equation: sut::Equation {
                 coefficients: vec![],
                 constraint: 0_f32,
