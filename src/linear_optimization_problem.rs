@@ -8,6 +8,31 @@ pub struct UpperBoundConstraint {
     bound: Value
 }
 
+type Variable = usize;
+
+#[derive(PartialEq)]
+#[derive(Debug)]
+#[derive(Clone)]
+struct Equation {
+    coefficients: Coefficients,
+    constraint: Value
+}
+
+#[derive(PartialEq)]
+#[derive(Debug)]
+struct SimplexRow {
+    basic_variable: Variable,
+    equation: Equation,
+    ratio: Value
+}
+
+#[derive(Debug)]
+struct SimplexProblem {
+    objective_equation: Equation,
+    rows: Vec<SimplexRow>,
+    point: Vec<Value>,
+}
+
 pub fn solve_standard_problem(
     objective_fn_coeffs: &Coefficients, 
     functional_constraints: &Vec<UpperBoundConstraint>) -> Vec<Value> {
@@ -16,6 +41,71 @@ pub fn solve_standard_problem(
         let mut solution = solve_simplex_problem(problem);
         solution.truncate(objective_fn_coeffs.len());
         solution
+}
+
+impl SimplexProblem {
+    pub fn new(objective_fn_coeffs: &Coefficients, functional_constraints: &Vec<UpperBoundConstraint>) -> Self {
+        Self {
+            objective_equation: initial_objective_equation(objective_fn_coeffs,functional_constraints.len()),
+            rows: initial_rows(&functional_constraints,objective_fn_coeffs.len()),
+            point: initial_point(objective_fn_coeffs,functional_constraints),
+        }
+    }
+}
+
+fn initial_objective_equation(objective_fn_coeffs: &Coefficients, nonbasic_var_count: usize) -> Equation {
+    let mut coefficients = objective_fn_coeffs.clone();
+    for coeff in &mut coefficients {
+        *coeff = -*coeff;
+    }
+    coefficients.append(&mut vec![0_f32;nonbasic_var_count]);
+    Equation{
+        coefficients: coefficients, 
+        constraint: 0_f32
+    }
+}
+
+fn initial_rows(functional_constraints: &Vec<UpperBoundConstraint>, nonbasic_var_count: usize) -> Vec<SimplexRow> {
+    let mut rows = vec![];
+    for (var, constraint) in functional_constraints.iter().enumerate() {
+        let row = SimplexRow {
+            basic_variable: nonbasic_var_count+var,
+            equation: equality_constraint(constraint,var,functional_constraints.len()),
+            ratio: 0_f32
+        };
+        rows.push(row);
+    }
+    rows
+}
+
+fn equality_constraint(
+    constraint: &UpperBoundConstraint, 
+    target_var: Variable,
+    basic_var_count: usize) -> Equation {
+        let coeffs = &constraint.coefficients;
+        Equation{
+            coefficients: with_slack_variable(coeffs, target_var, basic_var_count),
+            constraint: constraint.bound
+        }
+}
+
+fn with_slack_variable(
+    coefficients: &Vec<Value>,
+    target_var: Variable, 
+    basic_var_count: usize) -> Vec<Value> {
+        let mut coeffs = coefficients.clone();
+        for var in 0..basic_var_count {
+            coeffs.push(if var == target_var {1_f32} else {0_f32});
+        }
+        coeffs
+}
+
+fn initial_point(objective_fn_coeffs: &Coefficients, constraints: &Vec<UpperBoundConstraint>) -> Vec<Value> {
+    let mut point = vec![0_f32; objective_fn_coeffs.len()];
+    for constraint in constraints {
+        point.push(constraint.bound);
+    }
+    point
 }
 
 fn solve_simplex_problem(mut problem: SimplexProblem) -> Vec<Value> {
@@ -85,13 +175,6 @@ fn reduce_equations(problem: &mut SimplexProblem, pivot_row_idx: usize, variable
     reduce_equation(&mut problem.objective_equation,&pivot_row.equation,variable);
 }
 
-fn set_new_point(problem: &mut SimplexProblem) {
-    problem.point.fill(0_f32);
-    for row in problem.rows.iter() {
-        problem.point[row.basic_variable] = row.equation.constraint;
-    }
-}
-
 fn iter_around_mut<T>(slice: &mut [T], index: usize) -> (&mut T, impl Iterator<Item = &mut T>) {
     let (before, rest) = slice.split_at_mut(index);
     let (item, after) = rest.split_first_mut().unwrap();
@@ -106,94 +189,11 @@ fn reduce_equation(equation: &mut Equation, pivot_equation: &Equation, variable:
     equation.constraint -= factor * pivot_equation.constraint;
 }
 
-type Variable = usize;
-
-#[derive(PartialEq)]
-#[derive(Debug)]
-#[derive(Clone)]
-struct Equation {
-    coefficients: Coefficients,
-    constraint: Value
-}
-
-#[derive(PartialEq)]
-#[derive(Debug)]
-struct SimplexRow {
-    basic_variable: Variable,
-    equation: Equation,
-    ratio: Value
-}
-
-#[derive(Debug)]
-struct SimplexProblem {
-    objective_equation: Equation,
-    rows: Vec<SimplexRow>,
-    point: Vec<Value>,
-}
-
-impl SimplexProblem {
-    pub fn new(objective_fn_coeffs: &Coefficients, functional_constraints: &Vec<UpperBoundConstraint>) -> Self {
-        Self {
-            objective_equation: initial_objective_equation(objective_fn_coeffs,functional_constraints.len()),
-            rows: initial_rows(&functional_constraints,objective_fn_coeffs.len()),
-            point: initial_point(objective_fn_coeffs,functional_constraints),
-        }
+fn set_new_point(problem: &mut SimplexProblem) {
+    problem.point.fill(0_f32);
+    for row in problem.rows.iter() {
+        problem.point[row.basic_variable] = row.equation.constraint;
     }
-}
-
-fn initial_objective_equation(objective_fn_coeffs: &Coefficients, nonbasic_var_count: usize) -> Equation {
-    let mut coefficients = objective_fn_coeffs.clone();
-    for coeff in &mut coefficients {
-        *coeff = -*coeff;
-    }
-    coefficients.append(&mut vec![0_f32;nonbasic_var_count]);
-    Equation{
-        coefficients: coefficients, 
-        constraint: 0_f32
-    }
-}
-
-fn initial_rows(functional_constraints: &Vec<UpperBoundConstraint>, nonbasic_var_count: usize) -> Vec<SimplexRow> {
-    let mut rows = vec![];
-    for (var, constraint) in functional_constraints.iter().enumerate() {
-        let row = SimplexRow {
-            basic_variable: nonbasic_var_count+var,
-            equation: equality_constraint(constraint,var,functional_constraints.len()),
-            ratio: 0_f32
-        };
-        rows.push(row);
-    }
-    rows
-}
-
-fn equality_constraint(
-    constraint: &UpperBoundConstraint, 
-    target_var: Variable,
-    basic_var_count: usize) -> Equation {
-        let coeffs = &constraint.coefficients;
-        Equation{
-            coefficients: with_slack_variable(coeffs, target_var, basic_var_count),
-            constraint: constraint.bound
-        }
-}
-
-fn with_slack_variable(
-    coefficients: &Vec<Value>,
-    target_var: Variable, 
-    basic_var_count: usize) -> Vec<Value> {
-        let mut coeffs = coefficients.clone();
-        for var in 0..basic_var_count {
-            coeffs.push(if var == target_var {1_f32} else {0_f32});
-        }
-        coeffs
-}
-
-fn initial_point(objective_fn_coeffs: &Coefficients, constraints: &Vec<UpperBoundConstraint>) -> Vec<Value> {
-    let mut point = vec![0_f32; objective_fn_coeffs.len()];
-    for constraint in constraints {
-        point.push(constraint.bound);
-    }
-    point
 }
 
 #[cfg(test)]
