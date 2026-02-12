@@ -1,9 +1,8 @@
 use crate::linear_optimization_problem::{self as sut};
 
-pub fn upper_bound_constraint(
+fn upper_bound_constraint(
     coefficients: sut::Coefficients,
-    bound: sut::Value,
-) -> sut::UpperBoundConstraint {
+    bound: sut::Value) -> sut::UpperBoundConstraint {
     sut::UpperBoundConstraint {
         coefficients,
         bound,
