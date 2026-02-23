@@ -99,18 +99,3 @@ fn maximizes_two_dependent_variable_two_constraint_symmetric_problem() {
     let expected_solns = vec![1_f32, 1_f32];
     assert_eq!(expected_solns, solns);
 }
-
-mod initial_point;
-
-mod is_optimal;
-
-mod pivot_variable;
-
-mod set_ratios;
-
-mod pivot_row_idx;
-
-mod normalize_equation;
-
-mod reduce_equations;
-

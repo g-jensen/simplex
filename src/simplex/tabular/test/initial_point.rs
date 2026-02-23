@@ -1,5 +1,5 @@
 mod initial_point {
-    use crate::simplex::{self as sut};
+    use crate::simplex::tabular::{self as sut};
 
     #[test]
     fn finds_initial_point_with_no_constraints() {

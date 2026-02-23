@@ -1,5 +1,5 @@
 mod normalize_equation {
-    use crate::simplex::{self as sut};
+    use crate::simplex::tabular::{self as sut};
 
     #[test]
     fn sets_single_coefficient_to_one() {

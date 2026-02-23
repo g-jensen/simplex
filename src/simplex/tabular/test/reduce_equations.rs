@@ -1,5 +1,5 @@
 mod reduce_equations {
-    use crate::simplex::{self as sut};
+    use crate::simplex::tabular::{self as sut};
 
     #[test]
     fn reduces_objective_equation() {
