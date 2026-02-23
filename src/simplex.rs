@@ -38,7 +38,7 @@ pub fn solve(
     functional_constraints: &Vec<UpperBoundConstraint>) -> Vec<Value> {
         let problem = TabularSimplex::new(objective_fn_coeffs,functional_constraints);
         if functional_constraints.len() == 0 {return problem.point}
-        let mut solution = solve_simplex_tabular(problem);
+        let mut solution = solve_tabular(problem);
         solution.truncate(objective_fn_coeffs.len());
         solution
 }
@@ -108,7 +108,7 @@ fn initial_point(objective_fn_coeffs: &Coefficients, constraints: &Vec<UpperBoun
     point
 }
 
-fn solve_simplex_tabular(mut problem: TabularSimplex) -> Vec<Value> {
+fn solve_tabular(mut problem: TabularSimplex) -> Vec<Value> {
     while !is_optimal(&problem) {
         let Some(pivot_variable) = pivot_variable(&problem) else {
             return problem.point;
