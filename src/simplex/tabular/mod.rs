@@ -8,24 +8,24 @@ use crate::simplex::core::*;
 #[derive(PartialEq)]
 #[derive(Debug)]
 #[derive(Clone)]
-pub struct Equation {
-    pub coefficients: Coefficients,
-    pub constraint: Value
+struct Equation {
+    coefficients: Coefficients,
+    constraint: Value
 }
 
 #[derive(PartialEq)]
 #[derive(Debug)]
-pub struct SimplexRow {
-    pub basic_variable: Variable,
-    pub equation: Equation,
-    pub ratio: Value
+struct SimplexRow {
+    basic_variable: Variable,
+    equation: Equation,
+    ratio: Value
 }
 
 #[derive(Debug)]
 pub struct Problem {
-    pub objective_equation: Equation,
-    pub rows: Vec<SimplexRow>,
-    pub point: Vec<Value>,
+    objective_equation: Equation,
+    rows: Vec<SimplexRow>,
+    point: Vec<Value>,
 }
 
 impl Problem {
