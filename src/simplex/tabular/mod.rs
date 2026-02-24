@@ -15,6 +15,7 @@ struct Equation {
 
 #[derive(PartialEq)]
 #[derive(Debug)]
+#[derive(Clone)]
 struct SimplexRow {
     basic_variable: Variable,
     equation: Equation,
@@ -22,10 +23,28 @@ struct SimplexRow {
 }
 
 #[derive(Debug)]
+#[derive(PartialEq)]
+#[derive(Clone)]
 pub struct Problem {
     objective_equation: Equation,
     rows: Vec<SimplexRow>,
     point: Vec<Value>,
+}
+
+pub trait ProblemObserver {
+    fn observe(&mut self, problem: Problem);
+}
+
+pub struct EmptyObserver;
+
+impl ProblemObserver for EmptyObserver {
+    fn observe(&mut self, _problem: Problem) {}
+}
+
+impl EmptyObserver {
+    pub fn new() -> EmptyObserver {
+        EmptyObserver{}
+    }
 }
 
 impl Problem {
@@ -93,21 +112,23 @@ fn initial_point(objective_fn_coeffs: &Coefficients, constraints: &Vec<UpperBoun
     point
 }
 
-pub fn solve(mut problem: Problem) -> Vec<Value> {
+pub fn solve(mut problem: Problem, observer: &mut impl ProblemObserver) -> Vec<Value> {
+    observer.observe(problem.clone());
     while !is_optimal(&problem) {
         let Some(pivot_variable) = pivot_variable(&problem) else {
-            return problem.point;
+            return problem.point
         };
         set_ratios(&mut problem,pivot_variable);
         let Some(pivot_row_idx) = pivot_row_idx(&problem) else {
-            return problem.point;
+            return problem.point
         };
         set_basic_variable(&mut problem,pivot_row_idx,pivot_variable);
         normalize_equation(&mut problem,pivot_row_idx,pivot_variable);
         reduce_equations(&mut problem,pivot_row_idx,pivot_variable);
         set_new_point(&mut problem);
+        observer.observe(problem.clone());
     }
-    return problem.point;
+    return problem.point
 }
 
 fn is_optimal(problem: &Problem) -> bool {

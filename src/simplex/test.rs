@@ -1,6 +1,6 @@
 use crate::simplex::{self as sut};
 
-fn upper_bound_constraint(
+pub fn upper_bound_constraint(
     coefficients: sut::Coefficients,
     bound: sut::Value) -> sut::UpperBoundConstraint {
     sut::UpperBoundConstraint {
