@@ -48,26 +48,21 @@ fn solve_observes_empty_problem() {
 fn solve_observes_steps_of_problem() {
     let mut observer = MockObserver::new();
     let objective_coeffs = vec![frac(1, 1)];
-    let functional_constraint =
-        simplex_helper::upper_bound_constraint(vec![frac(3, 1)], frac(6, 1));
+    let functional_constraint = simplex_helper::upper_bound_constraint(
+        vec![frac(3, 1)], 
+        frac(6, 1)
+    );
     let constraints = vec![functional_constraint];
     let problem = sut::Problem::new(&objective_coeffs, &constraints);
-    let next_problem = sut::Problem {
-        objective_equation: sut::Equation {
-            coefficients: vec![frac(0, 1), frac(1, 3)],
-            constraint: frac(2, 1),
-        },
-        rows: vec![sut::SimplexRow {
-            basic_variable: 0,
-            equation: sut::Equation {
-                coefficients: vec![frac(1, 1), frac(1, 3)],
-                constraint: frac(2, 1),
-            },
-            ratio: frac(2, 1),
-        }],
-        point: vec![frac(2, 1), frac(0, 1)],
-    };
-    let expected_observations = vec![problem.clone(), next_problem];
+    let mut middle_problem = problem.clone();
+    sut::set_ratios(&mut middle_problem,0);
+    let mut solved_problem = middle_problem.clone();
+    sut::set_basic_variable(&mut solved_problem, 0, 0);
+    sut::normalize_equation(&mut solved_problem, 0, 0);
+    sut::reduce_equations(&mut solved_problem, 0, 0);
+    sut::set_new_point(&mut solved_problem);
+
+    let expected_observations = vec![middle_problem, solved_problem];
     let _solution = sut::solve(problem, &mut observer);
     assert_eq!(expected_observations, observer.observations);
 }

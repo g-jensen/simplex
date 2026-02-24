@@ -1,3 +1,5 @@
+mod tabular_observer;
+
 #[cfg(test)]
 mod test;
 
@@ -128,7 +130,6 @@ fn initial_point(
 }
 
 pub fn solve(mut problem: Problem, observer: &mut impl ProblemObserver) -> Vec<Value> {
-    observer.observe(problem.clone());
     while !is_optimal(&problem) {
         let Some(pivot_variable) = pivot_variable(&problem) else {
             return problem.point;
@@ -137,12 +138,13 @@ pub fn solve(mut problem: Problem, observer: &mut impl ProblemObserver) -> Vec<V
         let Some(pivot_row_idx) = pivot_row_idx(&problem) else {
             return problem.point;
         };
+        observer.observe(problem.clone());
         set_basic_variable(&mut problem, pivot_row_idx, pivot_variable);
         normalize_equation(&mut problem, pivot_row_idx, pivot_variable);
         reduce_equations(&mut problem, pivot_row_idx, pivot_variable);
         set_new_point(&mut problem);
-        observer.observe(problem.clone());
     }
+    observer.observe(problem.clone());
     return problem.point;
 }
 
