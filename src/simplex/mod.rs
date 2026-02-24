@@ -2,10 +2,11 @@
 mod test;
 
 pub mod core;
-mod tabular;
+pub mod tabular;
 
 use crate::simplex::core::*;
 
+#[allow(dead_code)]
 pub fn solve(
     objective_fn_coeffs: &Coefficients, 
     functional_constraints: &Vec<UpperBoundConstraint>) -> Vec<Value> {

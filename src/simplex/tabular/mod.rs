@@ -1,4 +1,4 @@
-mod write_observer;
+pub mod write_observer;
 
 #[cfg(test)]
 mod test;
