@@ -1,12 +1,12 @@
 mod pivot_row_idx {
-    use crate::simplex::tabular::{self as sut};
+    use crate::simplex::{tabular::{self as sut}, test::frac};
 
     #[test]
     fn returns_none_for_no_rows() {
         let problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
-                constraint: 0_f32,
+                constraint: frac(0, 1),
             },
             rows: vec![],
             point: vec![],
@@ -20,15 +20,15 @@ mod pivot_row_idx {
         let problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
-                constraint: 0_f32,
+                constraint: frac(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
                 equation: sut::Equation {
-                    coefficients: vec![1_f32],
-                    constraint: 5_f32,
+                    coefficients: vec![frac(1, 1)],
+                    constraint: frac(5, 1),
                 },
-                ratio: 5_f32,
+                ratio: frac(5, 1),
             }],
             point: vec![],
         };
@@ -41,15 +41,15 @@ mod pivot_row_idx {
         let problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
-                constraint: 0_f32,
+                constraint: frac(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
                 equation: sut::Equation {
-                    coefficients: vec![1_f32],
-                    constraint: 0_f32,
+                    coefficients: vec![frac(1, 1)],
+                    constraint: frac(0, 1),
                 },
-                ratio: 0_f32,
+                ratio: frac(0, 1),
             }],
             point: vec![],
         };
@@ -62,15 +62,15 @@ mod pivot_row_idx {
         let problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
-                constraint: 0_f32,
+                constraint: frac(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
                 equation: sut::Equation {
-                    coefficients: vec![1_f32],
-                    constraint: -5_f32,
+                    coefficients: vec![frac(1, 1)],
+                    constraint: -frac(5, 1),
                 },
-                ratio: -5_f32,
+                ratio: -frac(5, 1),
             }],
             point: vec![],
         };
@@ -83,32 +83,32 @@ mod pivot_row_idx {
         let problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
-                constraint: 0_f32,
+                constraint: frac(0, 1),
             },
             rows: vec![
                 sut::SimplexRow {
                     basic_variable: 0,
                     equation: sut::Equation {
-                        coefficients: vec![1_f32],
-                        constraint: 10_f32,
+                        coefficients: vec![frac(1, 1)],
+                        constraint: frac(10, 1),
                     },
-                    ratio: 10_f32,
+                    ratio: frac(10, 1),
                 },
                 sut::SimplexRow {
                     basic_variable: 1,
                     equation: sut::Equation {
-                        coefficients: vec![1_f32],
-                        constraint: 3_f32,
+                        coefficients: vec![frac(1, 1)],
+                        constraint: frac(3, 1),
                     },
-                    ratio: 3_f32,
+                    ratio: frac(3, 1),
                 },
                 sut::SimplexRow {
                     basic_variable: 2,
                     equation: sut::Equation {
-                        coefficients: vec![1_f32],
-                        constraint: 7_f32,
+                        coefficients: vec![frac(1, 1)],
+                        constraint: frac(7, 1),
                     },
-                    ratio: 7_f32,
+                    ratio: frac(7, 1),
                 },
             ],
             point: vec![],
@@ -122,32 +122,32 @@ mod pivot_row_idx {
         let problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
-                constraint: 0_f32,
+                constraint: frac(0, 1),
             },
             rows: vec![
                 sut::SimplexRow {
                     basic_variable: 0,
                     equation: sut::Equation {
-                        coefficients: vec![1_f32],
-                        constraint: -2_f32,
+                        coefficients: vec![frac(1, 1)],
+                        constraint: -frac(2, 1),
                     },
-                    ratio: -2_f32,
+                    ratio: -frac(2, 1),
                 },
                 sut::SimplexRow {
                     basic_variable: 1,
                     equation: sut::Equation {
-                        coefficients: vec![1_f32],
-                        constraint: 0_f32,
+                        coefficients: vec![frac(1, 1)],
+                        constraint: frac(0, 1),
                     },
-                    ratio: 0_f32,
+                    ratio: frac(0, 1),
                 },
                 sut::SimplexRow {
                     basic_variable: 2,
                     equation: sut::Equation {
-                        coefficients: vec![1_f32],
-                        constraint: 5_f32,
+                        coefficients: vec![frac(1, 1)],
+                        constraint: frac(5, 1),
                     },
-                    ratio: 5_f32,
+                    ratio: frac(5, 1),
                 },
             ],
             point: vec![],
@@ -161,24 +161,24 @@ mod pivot_row_idx {
         let problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
-                constraint: 0_f32,
+                constraint: frac(0, 1),
             },
             rows: vec![
                 sut::SimplexRow {
                     basic_variable: 0,
                     equation: sut::Equation {
-                        coefficients: vec![1_f32],
-                        constraint: -3_f32,
+                        coefficients: vec![frac(1, 1)],
+                        constraint: -frac(3, 1),
                     },
-                    ratio: -3_f32,
+                    ratio: -frac(3, 1),
                 },
                 sut::SimplexRow {
                     basic_variable: 1,
                     equation: sut::Equation {
-                        coefficients: vec![1_f32],
-                        constraint: 0_f32,
+                        coefficients: vec![frac(1, 1)],
+                        constraint: frac(0, 1),
                     },
-                    ratio: 0_f32,
+                    ratio: frac(0, 1),
                 },
             ],
             point: vec![],

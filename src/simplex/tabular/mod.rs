@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod test;
 
-use std::f32::INFINITY;
+use fraction::{ConstOne, ConstZero, Fraction};
 
 use crate::simplex::core::*;
 
@@ -62,10 +62,10 @@ fn initial_objective_equation(objective_fn_coeffs: &Coefficients, nonbasic_var_c
     for coeff in &mut coefficients {
         *coeff = -*coeff;
     }
-    coefficients.append(&mut vec![0_f32;nonbasic_var_count]);
+    coefficients.append(&mut vec![Fraction::ZERO; nonbasic_var_count]);
     Equation{
         coefficients: coefficients, 
-        constraint: 0_f32
+        constraint: Fraction::ZERO
     }
 }
 
@@ -75,7 +75,7 @@ fn initial_rows(functional_constraints: &Vec<UpperBoundConstraint>, nonbasic_var
         let row = SimplexRow {
             basic_variable: nonbasic_var_count+var,
             equation: equality_constraint(constraint,var,functional_constraints.len()),
-            ratio: 0_f32
+            ratio: Fraction::ZERO
         };
         rows.push(row);
     }
@@ -99,13 +99,13 @@ fn with_slack_variable(
     basic_var_count: usize) -> Vec<Value> {
         let mut coeffs = coefficients.clone();
         for var in 0..basic_var_count {
-            coeffs.push(if var == target_var {1_f32} else {0_f32});
+            coeffs.push(if var == target_var {Fraction::ONE} else {Fraction::ZERO});
         }
         coeffs
 }
 
 fn initial_point(objective_fn_coeffs: &Coefficients, constraints: &Vec<UpperBoundConstraint>) -> Vec<Value> {
-    let mut point = vec![0_f32; objective_fn_coeffs.len()];
+    let mut point = vec![Fraction::ZERO; objective_fn_coeffs.len()];
     for constraint in constraints {
         point.push(constraint.bound);
     }
@@ -132,12 +132,12 @@ pub fn solve(mut problem: Problem, observer: &mut impl ProblemObserver) -> Vec<V
 }
 
 fn is_optimal(problem: &Problem) -> bool {
-    problem.objective_equation.coefficients.iter().all(|v| *v >= 0_f32)
+    problem.objective_equation.coefficients.iter().all(|v| *v >= Fraction::ZERO)
 }
 
 fn pivot_variable(problem: &Problem) -> Option<Variable> {
     problem.objective_equation.coefficients.iter().enumerate()
-        .min_by(|(_, v1),(_, v2)| v1.total_cmp(v2))
+        .min_by(|(_, v1),(_, v2)| v1.cmp(v2))
         .unzip().0
 }
 
@@ -149,8 +149,8 @@ fn set_ratios(problem: &mut Problem, pivot_column: Variable) {
 
 fn pivot_row_idx(problem: &Problem) -> Option<usize> {
     problem.rows.iter().enumerate()
-        .filter(|(_, row)| row.ratio > 0_f32 && row.ratio != INFINITY)
-        .min_by(|(_, r1),(_, r2)| r1.ratio.total_cmp(&r2.ratio))
+        .filter(|(_, row)| row.ratio > Fraction::ZERO && row.ratio != Fraction::Infinity(fraction::Sign::Plus))
+        .min_by(|(_, r1),(_, r2)| r1.ratio.cmp(&r2.ratio))
         .unzip().0
 }
 
@@ -164,7 +164,7 @@ fn normalize_equation(problem: &mut Problem, equation_idx: usize, variable: Vari
     let var_count = coeffs.len();
     for var in  0..var_count {
         if var == variable {
-            coeffs[var] = 1_f32;
+            coeffs[var] = Fraction::ONE;
         } else {
             coeffs[var] /= coeff;
         }
@@ -195,7 +195,7 @@ fn reduce_equation(equation: &mut Equation, pivot_equation: &Equation, variable:
 }
 
 fn set_new_point(problem: &mut Problem) {
-    problem.point.fill(0_f32);
+    problem.point.fill(Fraction::ZERO);
     for row in problem.rows.iter() {
         problem.point[row.basic_variable] = row.equation.constraint;
     }

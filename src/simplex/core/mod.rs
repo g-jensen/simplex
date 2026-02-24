@@ -1,4 +1,6 @@
-pub type Value = f32;
+use fraction::Fraction;
+
+pub type Value = Fraction;
 pub type Coefficients = Vec<Value>;
 pub type Variable = usize;
 

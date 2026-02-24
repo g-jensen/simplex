@@ -1,12 +1,12 @@
 mod is_optimal {
-    use crate::simplex::tabular::{self as sut};
+    use crate::simplex::{tabular::{self as sut}, test::frac};
 
     #[test]
     fn empty_objective_is_optimal() {
         let problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
-                constraint: 0_f32,
+                constraint: frac(0, 1),
             },
             rows: vec![],
             point: vec![],
@@ -18,8 +18,8 @@ mod is_optimal {
     fn positive_objective_is_optimal() {
         let problem = sut::Problem {
             objective_equation: sut::Equation {
-                coefficients: vec![1_f32],
-                constraint: 0_f32,
+                coefficients: vec![frac(1, 1)],
+                constraint: frac(0, 1),
             },
             rows: vec![],
             point: vec![],
@@ -31,8 +31,8 @@ mod is_optimal {
     fn zero_objective_is_optimal() {
         let problem = sut::Problem {
             objective_equation: sut::Equation {
-                coefficients: vec![0_f32],
-                constraint: 0_f32,
+                coefficients: vec![frac(0, 1)],
+                constraint: frac(0, 1),
             },
             rows: vec![],
             point: vec![],
@@ -44,8 +44,8 @@ mod is_optimal {
     fn positive_and_zero_objective_is_optimal() {
         let problem = sut::Problem {
             objective_equation: sut::Equation {
-                coefficients: vec![1_f32, 0_f32],
-                constraint: 0_f32,
+                coefficients: vec![frac(1, 1), frac(0, 1)],
+                constraint: frac(0, 1),
             },
             rows: vec![],
             point: vec![],
@@ -57,8 +57,8 @@ mod is_optimal {
     fn negative_objective_is_not_optimal() {
         let problem = sut::Problem {
             objective_equation: sut::Equation {
-                coefficients: vec![-1_f32],
-                constraint: 0_f32,
+                coefficients: vec![-frac(1, 1)],
+                constraint: frac(0, 1),
             },
             rows: vec![],
             point: vec![],
@@ -70,8 +70,8 @@ mod is_optimal {
     fn one_negative_in_objective_is_not_optimal() {
         let problem = sut::Problem {
             objective_equation: sut::Equation {
-                coefficients: vec![-1_f32, 0_f32],
-                constraint: 0_f32,
+                coefficients: vec![-frac(1, 1), frac(0, 1)],
+                constraint: frac(0, 1),
             },
             rows: vec![],
             point: vec![],
