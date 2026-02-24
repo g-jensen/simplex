@@ -1,4 +1,4 @@
-mod tabular_observer;
+mod write_observer;
 
 #[cfg(test)]
 mod test;
