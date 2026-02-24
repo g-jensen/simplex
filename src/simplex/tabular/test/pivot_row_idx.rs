@@ -1,5 +1,8 @@
 mod pivot_row_idx {
-    use crate::simplex::{tabular::{self as sut}, test::frac};
+    use crate::simplex::{
+        tabular::{self as sut},
+        test::frac,
+    };
 
     #[test]
     fn returns_none_for_no_rows() {

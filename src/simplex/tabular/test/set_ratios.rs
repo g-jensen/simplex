@@ -1,5 +1,8 @@
 mod set_ratios {
-    use crate::simplex::{tabular::{self as sut}, test::frac};
+    use crate::simplex::{
+        tabular::{self as sut},
+        test::frac,
+    };
 
     #[test]
     fn recalculates_ratio_for_row() {

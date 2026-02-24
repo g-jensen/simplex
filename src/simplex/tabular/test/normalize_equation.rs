@@ -1,5 +1,8 @@
 mod normalize_equation {
-    use crate::simplex::{tabular::{self as sut}, test::frac};
+    use crate::simplex::{
+        tabular::{self as sut},
+        test::frac,
+    };
 
     #[test]
     fn sets_single_coefficient_to_one() {
@@ -122,7 +125,10 @@ mod normalize_equation {
             point: vec![],
         };
         sut::normalize_equation(&mut problem, 1, 1);
-        assert_eq!(vec![frac(2, 1), frac(4, 1)], problem.rows[0].equation.coefficients);
+        assert_eq!(
+            vec![frac(2, 1), frac(4, 1)],
+            problem.rows[0].equation.coefficients
+        );
         assert_eq!(
             vec![frac(1, 3), frac(1, 1)],
             problem.rows[1].equation.coefficients

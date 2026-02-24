@@ -1,5 +1,8 @@
 mod reduce_equations {
-    use crate::simplex::{tabular::{self as sut}, test::frac};
+    use crate::simplex::{
+        tabular::{self as sut},
+        test::frac,
+    };
 
     #[test]
     fn reduces_objective_equation() {
@@ -44,7 +47,10 @@ mod reduce_equations {
             point: vec![],
         };
         sut::reduce_equations(&mut problem, 0, 0);
-        assert_eq!(vec![frac(1, 1), frac(2, 1)], problem.rows[0].equation.coefficients);
+        assert_eq!(
+            vec![frac(1, 1), frac(2, 1)],
+            problem.rows[0].equation.coefficients
+        );
         assert_eq!(frac(6, 1), problem.rows[0].equation.constraint);
     }
 
@@ -76,7 +82,10 @@ mod reduce_equations {
             point: vec![],
         };
         sut::reduce_equations(&mut problem, 0, 0);
-        assert_eq!(vec![frac(0, 1), -frac(2, 1)], problem.rows[1].equation.coefficients);
+        assert_eq!(
+            vec![frac(0, 1), -frac(2, 1)],
+            problem.rows[1].equation.coefficients
+        );
         assert_eq!(-frac(10, 1), problem.rows[1].equation.constraint);
     }
 
@@ -116,11 +125,20 @@ mod reduce_equations {
             point: vec![],
         };
         sut::reduce_equations(&mut problem, 1, 0);
-        assert_eq!(vec![frac(0, 1), -frac(5, 1)], problem.rows[0].equation.coefficients);
+        assert_eq!(
+            vec![frac(0, 1), -frac(5, 1)],
+            problem.rows[0].equation.coefficients
+        );
         assert_eq!(-frac(11, 1), problem.rows[0].equation.constraint);
-        assert_eq!(vec![frac(1, 1), frac(3, 1)], problem.rows[1].equation.coefficients);
+        assert_eq!(
+            vec![frac(1, 1), frac(3, 1)],
+            problem.rows[1].equation.coefficients
+        );
         assert_eq!(frac(8, 1), problem.rows[1].equation.constraint);
-        assert_eq!(vec![frac(0, 1), -frac(10, 1)], problem.rows[2].equation.coefficients);
+        assert_eq!(
+            vec![frac(0, 1), -frac(10, 1)],
+            problem.rows[2].equation.coefficients
+        );
         assert_eq!(-frac(20, 1), problem.rows[2].equation.constraint);
     }
 

@@ -1,11 +1,14 @@
 mod initial_point {
-    use crate::simplex::{tabular::{self as sut}, test::frac};
+    use crate::simplex::{
+        tabular::{self as sut},
+        test::frac,
+    };
 
     #[test]
     fn finds_initial_point_with_no_constraints() {
         let coeffs = Vec::<sut::Value>::new();
         let ub_constraints = Vec::<sut::UpperBoundConstraint>::new();
-        let point = sut::initial_point(&coeffs,&ub_constraints);
+        let point = sut::initial_point(&coeffs, &ub_constraints);
         let expected_point = Vec::<sut::Value>::new();
         assert_eq!(expected_point, point);
     }
@@ -17,7 +20,7 @@ mod initial_point {
             coefficients: vec![frac(1, 1)],
             bound: frac(5, 1),
         }];
-        let point = sut::initial_point(&coeffs,&ub_constraints);
+        let point = sut::initial_point(&coeffs, &ub_constraints);
         let expected_point = vec![frac(0, 1), frac(5, 1)];
         assert_eq!(expected_point, point);
     }
@@ -29,7 +32,7 @@ mod initial_point {
             coefficients: vec![frac(1, 1), frac(2, 1)],
             bound: frac(6, 1),
         }];
-        let point = sut::initial_point(&coeffs,&ub_constraints);
+        let point = sut::initial_point(&coeffs, &ub_constraints);
         let expected_point = vec![frac(0, 1), frac(0, 1), frac(6, 1)];
         assert_eq!(expected_point, point);
     }
@@ -47,7 +50,7 @@ mod initial_point {
                 bound: frac(7, 1),
             },
         ];
-        let point = sut::initial_point(&coeffs,&ub_constraints);
+        let point = sut::initial_point(&coeffs, &ub_constraints);
         let expected_point = vec![frac(0, 1), frac(0, 1), frac(6, 1), frac(7, 1)];
         assert_eq!(expected_point, point);
     }

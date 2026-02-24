@@ -1,5 +1,8 @@
 mod is_optimal {
-    use crate::simplex::{tabular::{self as sut}, test::frac};
+    use crate::simplex::{
+        tabular::{self as sut},
+        test::frac,
+    };
 
     #[test]
     fn empty_objective_is_optimal() {
