@@ -5,30 +5,24 @@ use fraction::{ConstOne, ConstZero, Fraction};
 
 use crate::simplex::core::*;
 
-#[derive(PartialEq)]
-#[derive(Debug)]
-#[derive(Clone)]
-struct Equation {
-    coefficients: Coefficients,
-    constraint: Value
+#[derive(PartialEq, Debug, Clone)]
+pub struct Equation {
+    pub coefficients: Coefficients,
+    pub constraint: Value,
 }
 
-#[derive(PartialEq)]
-#[derive(Debug)]
-#[derive(Clone)]
-struct SimplexRow {
-    basic_variable: Variable,
-    equation: Equation,
-    ratio: Value
+#[derive(PartialEq, Debug, Clone)]
+pub struct SimplexRow {
+    pub basic_variable: Variable,
+    pub equation: Equation,
+    pub ratio: Value,
 }
 
-#[derive(Debug)]
-#[derive(PartialEq)]
-#[derive(Clone)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct Problem {
-    objective_equation: Equation,
-    rows: Vec<SimplexRow>,
-    point: Vec<Value>,
+    pub objective_equation: Equation,
+    pub rows: Vec<SimplexRow>,
+    pub point: Vec<Value>,
 }
 
 pub trait ProblemObserver {
@@ -43,39 +37,51 @@ impl ProblemObserver for EmptyObserver {
 
 impl EmptyObserver {
     pub fn new() -> EmptyObserver {
-        EmptyObserver{}
+        EmptyObserver {}
     }
 }
 
 impl Problem {
-    pub fn new(objective_fn_coeffs: &Coefficients, functional_constraints: &Vec<UpperBoundConstraint>) -> Self {
+    pub fn new(
+        objective_fn_coeffs: &Coefficients,
+        functional_constraints: &Vec<UpperBoundConstraint>,
+    ) -> Self {
         Self {
-            objective_equation: initial_objective_equation(objective_fn_coeffs,functional_constraints.len()),
-            rows: initial_rows(&functional_constraints,objective_fn_coeffs.len()),
-            point: initial_point(objective_fn_coeffs,functional_constraints),
+            objective_equation: initial_objective_equation(
+                objective_fn_coeffs,
+                functional_constraints.len(),
+            ),
+            rows: initial_rows(&functional_constraints, objective_fn_coeffs.len()),
+            point: initial_point(objective_fn_coeffs, functional_constraints),
         }
     }
 }
 
-fn initial_objective_equation(objective_fn_coeffs: &Coefficients, nonbasic_var_count: usize) -> Equation {
+fn initial_objective_equation(
+    objective_fn_coeffs: &Coefficients,
+    nonbasic_var_count: usize,
+) -> Equation {
     let mut coefficients = objective_fn_coeffs.clone();
     for coeff in &mut coefficients {
         *coeff = -*coeff;
     }
     coefficients.append(&mut vec![Fraction::ZERO; nonbasic_var_count]);
-    Equation{
-        coefficients: coefficients, 
-        constraint: Fraction::ZERO
+    Equation {
+        coefficients: coefficients,
+        constraint: Fraction::ZERO,
     }
 }
 
-fn initial_rows(functional_constraints: &Vec<UpperBoundConstraint>, nonbasic_var_count: usize) -> Vec<SimplexRow> {
+fn initial_rows(
+    functional_constraints: &Vec<UpperBoundConstraint>,
+    nonbasic_var_count: usize,
+) -> Vec<SimplexRow> {
     let mut rows = vec![];
     for (var, constraint) in functional_constraints.iter().enumerate() {
         let row = SimplexRow {
-            basic_variable: nonbasic_var_count+var,
-            equation: equality_constraint(constraint,var,functional_constraints.len()),
-            ratio: Fraction::ZERO
+            basic_variable: nonbasic_var_count + var,
+            equation: equality_constraint(constraint, var, functional_constraints.len()),
+            ratio: Fraction::ZERO,
         };
         rows.push(row);
     }
@@ -83,28 +89,37 @@ fn initial_rows(functional_constraints: &Vec<UpperBoundConstraint>, nonbasic_var
 }
 
 fn equality_constraint(
-    constraint: &UpperBoundConstraint, 
+    constraint: &UpperBoundConstraint,
     target_var: Variable,
-    basic_var_count: usize) -> Equation {
-        let coeffs = &constraint.coefficients;
-        Equation{
-            coefficients: with_slack_variable(coeffs, target_var, basic_var_count),
-            constraint: constraint.bound
-        }
+    basic_var_count: usize,
+) -> Equation {
+    let coeffs = &constraint.coefficients;
+    Equation {
+        coefficients: with_slack_variable(coeffs, target_var, basic_var_count),
+        constraint: constraint.bound,
+    }
 }
 
 fn with_slack_variable(
     coefficients: &Vec<Value>,
-    target_var: Variable, 
-    basic_var_count: usize) -> Vec<Value> {
-        let mut coeffs = coefficients.clone();
-        for var in 0..basic_var_count {
-            coeffs.push(if var == target_var {Fraction::ONE} else {Fraction::ZERO});
-        }
-        coeffs
+    target_var: Variable,
+    basic_var_count: usize,
+) -> Vec<Value> {
+    let mut coeffs = coefficients.clone();
+    for var in 0..basic_var_count {
+        coeffs.push(if var == target_var {
+            Fraction::ONE
+        } else {
+            Fraction::ZERO
+        });
+    }
+    coeffs
 }
 
-fn initial_point(objective_fn_coeffs: &Coefficients, constraints: &Vec<UpperBoundConstraint>) -> Vec<Value> {
+fn initial_point(
+    objective_fn_coeffs: &Coefficients,
+    constraints: &Vec<UpperBoundConstraint>,
+) -> Vec<Value> {
     let mut point = vec![Fraction::ZERO; objective_fn_coeffs.len()];
     for constraint in constraints {
         point.push(constraint.bound);
@@ -116,29 +131,38 @@ pub fn solve(mut problem: Problem, observer: &mut impl ProblemObserver) -> Vec<V
     observer.observe(problem.clone());
     while !is_optimal(&problem) {
         let Some(pivot_variable) = pivot_variable(&problem) else {
-            return problem.point
+            return problem.point;
         };
-        set_ratios(&mut problem,pivot_variable);
+        set_ratios(&mut problem, pivot_variable);
         let Some(pivot_row_idx) = pivot_row_idx(&problem) else {
-            return problem.point
+            return problem.point;
         };
-        set_basic_variable(&mut problem,pivot_row_idx,pivot_variable);
-        normalize_equation(&mut problem,pivot_row_idx,pivot_variable);
-        reduce_equations(&mut problem,pivot_row_idx,pivot_variable);
+        set_basic_variable(&mut problem, pivot_row_idx, pivot_variable);
+        normalize_equation(&mut problem, pivot_row_idx, pivot_variable);
+        reduce_equations(&mut problem, pivot_row_idx, pivot_variable);
         set_new_point(&mut problem);
         observer.observe(problem.clone());
     }
-    return problem.point
+    return problem.point;
 }
 
 fn is_optimal(problem: &Problem) -> bool {
-    problem.objective_equation.coefficients.iter().all(|v| *v >= Fraction::ZERO)
+    problem
+        .objective_equation
+        .coefficients
+        .iter()
+        .all(|v| *v >= Fraction::ZERO)
 }
 
 fn pivot_variable(problem: &Problem) -> Option<Variable> {
-    problem.objective_equation.coefficients.iter().enumerate()
-        .min_by(|(_, v1),(_, v2)| v1.cmp(v2))
-        .unzip().0
+    problem
+        .objective_equation
+        .coefficients
+        .iter()
+        .enumerate()
+        .min_by(|(_, v1), (_, v2)| v1.cmp(v2))
+        .unzip()
+        .0
 }
 
 fn set_ratios(problem: &mut Problem, pivot_column: Variable) {
@@ -148,10 +172,16 @@ fn set_ratios(problem: &mut Problem, pivot_column: Variable) {
 }
 
 fn pivot_row_idx(problem: &Problem) -> Option<usize> {
-    problem.rows.iter().enumerate()
-        .filter(|(_, row)| row.ratio > Fraction::ZERO && row.ratio != Fraction::Infinity(fraction::Sign::Plus))
-        .min_by(|(_, r1),(_, r2)| r1.ratio.cmp(&r2.ratio))
-        .unzip().0
+    problem
+        .rows
+        .iter()
+        .enumerate()
+        .filter(|(_, row)| {
+            row.ratio > Fraction::ZERO && row.ratio != Fraction::Infinity(fraction::Sign::Plus)
+        })
+        .min_by(|(_, r1), (_, r2)| r1.ratio.cmp(&r2.ratio))
+        .unzip()
+        .0
 }
 
 fn set_basic_variable(problem: &mut Problem, var_idx: usize, new_var: usize) {
@@ -162,7 +192,7 @@ fn normalize_equation(problem: &mut Problem, equation_idx: usize, variable: Vari
     let coeffs = &mut problem.rows[equation_idx].equation.coefficients;
     let coeff = coeffs[variable];
     let var_count = coeffs.len();
-    for var in  0..var_count {
+    for var in 0..var_count {
         if var == variable {
             coeffs[var] = Fraction::ONE;
         } else {
@@ -175,9 +205,13 @@ fn normalize_equation(problem: &mut Problem, equation_idx: usize, variable: Vari
 fn reduce_equations(problem: &mut Problem, pivot_row_idx: usize, variable: Variable) {
     let (pivot_row, other_rows) = iter_around_mut(&mut problem.rows, pivot_row_idx);
     for row in other_rows {
-        reduce_equation(&mut row.equation,&pivot_row.equation,variable);
+        reduce_equation(&mut row.equation, &pivot_row.equation, variable);
     }
-    reduce_equation(&mut problem.objective_equation,&pivot_row.equation,variable);
+    reduce_equation(
+        &mut problem.objective_equation,
+        &pivot_row.equation,
+        variable,
+    );
 }
 
 fn iter_around_mut<T>(slice: &mut [T], index: usize) -> (&mut T, impl Iterator<Item = &mut T>) {
