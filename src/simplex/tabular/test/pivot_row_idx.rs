@@ -3,7 +3,7 @@ mod pivot_row_idx {
 
     #[test]
     fn returns_none_for_no_rows() {
-        let problem = sut::TabularSimplex {
+        let problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
                 constraint: 0_f32,
@@ -17,7 +17,7 @@ mod pivot_row_idx {
 
     #[test]
     fn returns_index_for_single_positive_ratio() {
-        let problem = sut::TabularSimplex {
+        let problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
                 constraint: 0_f32,
@@ -38,7 +38,7 @@ mod pivot_row_idx {
 
     #[test]
     fn returns_none_for_zero_ratio() {
-        let problem = sut::TabularSimplex {
+        let problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
                 constraint: 0_f32,
@@ -59,7 +59,7 @@ mod pivot_row_idx {
 
     #[test]
     fn returns_none_for_negative_ratio() {
-        let problem = sut::TabularSimplex {
+        let problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
                 constraint: 0_f32,
@@ -80,7 +80,7 @@ mod pivot_row_idx {
 
     #[test]
     fn returns_index_of_minimum_positive_ratio() {
-        let problem = sut::TabularSimplex {
+        let problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
                 constraint: 0_f32,
@@ -119,7 +119,7 @@ mod pivot_row_idx {
 
     #[test]
     fn ignores_non_positive_ratios() {
-        let problem = sut::TabularSimplex {
+        let problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
                 constraint: 0_f32,
@@ -158,7 +158,7 @@ mod pivot_row_idx {
 
     #[test]
     fn returns_none_when_all_ratios_non_positive() {
-        let problem = sut::TabularSimplex {
+        let problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
                 constraint: 0_f32,

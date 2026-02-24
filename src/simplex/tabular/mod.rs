@@ -22,13 +22,13 @@ pub struct SimplexRow {
 }
 
 #[derive(Debug)]
-pub struct TabularSimplex {
+pub struct Problem {
     pub objective_equation: Equation,
     pub rows: Vec<SimplexRow>,
     pub point: Vec<Value>,
 }
 
-impl TabularSimplex {
+impl Problem {
     pub fn new(objective_fn_coeffs: &Coefficients, functional_constraints: &Vec<UpperBoundConstraint>) -> Self {
         Self {
             objective_equation: initial_objective_equation(objective_fn_coeffs,functional_constraints.len()),
@@ -93,7 +93,7 @@ fn initial_point(objective_fn_coeffs: &Coefficients, constraints: &Vec<UpperBoun
     point
 }
 
-pub fn solve(mut problem: TabularSimplex) -> Vec<Value> {
+pub fn solve(mut problem: Problem) -> Vec<Value> {
     while !is_optimal(&problem) {
         let Some(pivot_variable) = pivot_variable(&problem) else {
             return problem.point;
@@ -110,34 +110,34 @@ pub fn solve(mut problem: TabularSimplex) -> Vec<Value> {
     return problem.point;
 }
 
-fn is_optimal(problem: &TabularSimplex) -> bool {
+fn is_optimal(problem: &Problem) -> bool {
     problem.objective_equation.coefficients.iter().all(|v| *v >= 0_f32)
 }
 
-fn pivot_variable(problem: &TabularSimplex) -> Option<Variable> {
+fn pivot_variable(problem: &Problem) -> Option<Variable> {
     problem.objective_equation.coefficients.iter().enumerate()
         .min_by(|(_, v1),(_, v2)| v1.total_cmp(v2))
         .unzip().0
 }
 
-fn set_ratios(problem: &mut TabularSimplex, pivot_column: Variable) {
+fn set_ratios(problem: &mut Problem, pivot_column: Variable) {
     for row in &mut problem.rows {
         row.ratio = row.equation.constraint / row.equation.coefficients[pivot_column];
     }
 }
 
-fn pivot_row_idx(problem: &TabularSimplex) -> Option<usize> {
+fn pivot_row_idx(problem: &Problem) -> Option<usize> {
     problem.rows.iter().enumerate()
         .filter(|(_, row)| row.ratio > 0_f32 && row.ratio != INFINITY)
         .min_by(|(_, r1),(_, r2)| r1.ratio.total_cmp(&r2.ratio))
         .unzip().0
 }
 
-fn set_basic_variable(problem: &mut TabularSimplex, var_idx: usize, new_var: usize) {
+fn set_basic_variable(problem: &mut Problem, var_idx: usize, new_var: usize) {
     problem.rows[var_idx].basic_variable = new_var;
 }
 
-fn normalize_equation(problem: &mut TabularSimplex, equation_idx: usize, variable: Variable) {
+fn normalize_equation(problem: &mut Problem, equation_idx: usize, variable: Variable) {
     let coeffs = &mut problem.rows[equation_idx].equation.coefficients;
     let coeff = coeffs[variable];
     let var_count = coeffs.len();
@@ -151,7 +151,7 @@ fn normalize_equation(problem: &mut TabularSimplex, equation_idx: usize, variabl
     problem.rows[equation_idx].equation.constraint /= coeff;
 }
 
-fn reduce_equations(problem: &mut TabularSimplex, pivot_row_idx: usize, variable: Variable) {
+fn reduce_equations(problem: &mut Problem, pivot_row_idx: usize, variable: Variable) {
     let (pivot_row, other_rows) = iter_around_mut(&mut problem.rows, pivot_row_idx);
     for row in other_rows {
         reduce_equation(&mut row.equation,&pivot_row.equation,variable);
@@ -173,7 +173,7 @@ fn reduce_equation(equation: &mut Equation, pivot_equation: &Equation, variable:
     equation.constraint -= factor * pivot_equation.constraint;
 }
 
-fn set_new_point(problem: &mut TabularSimplex) {
+fn set_new_point(problem: &mut Problem) {
     problem.point.fill(0_f32);
     for row in problem.rows.iter() {
         problem.point[row.basic_variable] = row.equation.constraint;

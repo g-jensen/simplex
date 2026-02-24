@@ -3,7 +3,7 @@ mod set_ratios {
 
     #[test]
     fn recalculates_ratio_for_row() {
-        let mut problem = sut::TabularSimplex {
+        let mut problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
                 constraint: 0_f32,
@@ -24,7 +24,7 @@ mod set_ratios {
 
     #[test]
     fn recalculates_ratio_for_rows() {
-        let mut problem = sut::TabularSimplex {
+        let mut problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
                 constraint: 0_f32,
@@ -56,7 +56,7 @@ mod set_ratios {
 
     #[test]
     fn recalculates_ratio_for_specified_var() {
-        let mut problem = sut::TabularSimplex {
+        let mut problem = sut::Problem {
             objective_equation: sut::Equation {
                 coefficients: vec![],
                 constraint: 0_f32,
