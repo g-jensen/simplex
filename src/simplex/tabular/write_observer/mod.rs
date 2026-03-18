@@ -1,8 +1,7 @@
 #[cfg(test)]
 mod test;
 
-use super::{Problem, ProblemObserver, SimplexRow};
-use crate::simplex::core::{Coefficients, Variable};
+use super::{Problem, ProblemObserver, SimplexRow, Coefficients, Variable};
 use std::io::Write;
 
 struct RowStrings {

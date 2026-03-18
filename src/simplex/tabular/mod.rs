@@ -5,7 +5,14 @@ mod test;
 
 use fraction::{ConstOne, ConstZero, Fraction};
 
-use crate::simplex::core::*;
+pub type Value = Fraction;
+pub type Coefficients = Vec<Value>;
+pub type Variable = usize;
+
+pub struct UpperBoundConstraint {
+    pub coefficients: Coefficients,
+    pub bound: Value
+}
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Equation {
