@@ -12,15 +12,15 @@ use crate::simplex::tabular::solve;
 fn main() {
     let mut writer = stdout();
     let mut observer = WriteObserver::new(&mut writer);
-    let objective_fn_coeffs = vec![Fraction::from(2), Fraction::from(6), Fraction::from(9)];
+    let objective_fn_coeffs = vec![Fraction::from(1), Fraction::from(2)];
     let functional_constraints = vec![
         UpperBoundConstraint {
-            coefficients: vec![Fraction::from(1),Fraction::from(0),Fraction::from(1)],
-            bound: Fraction::from(3)
+            coefficients: vec![Fraction::from(1),Fraction::from(1)],
+            bound: Fraction::from(4)
         },
         UpperBoundConstraint {
-            coefficients: vec![Fraction::from(0),Fraction::from(1),Fraction::from(2)],
-            bound: Fraction::from(5)
+            coefficients: vec![Fraction::from(1),Fraction::from(3)],
+            bound: Fraction::from(8)
         },
     ];
     let problem = Problem::new(&objective_fn_coeffs, &functional_constraints);
