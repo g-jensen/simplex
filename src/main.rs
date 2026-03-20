@@ -5,7 +5,7 @@ use std::io::stdout;
 use fraction::Fraction;
 
 use crate::simplex::tabular::UpperBoundConstraint;
-use crate::simplex::tabular::Value;
+use crate::simplex::value::Value;
 use crate::simplex::tabular::write_observer::WriteObserver;
 use crate::simplex::tabular::Problem;
 use crate::simplex::tabular::solve;

@@ -3,104 +3,10 @@ pub mod write_observer;
 #[cfg(test)]
 mod test;
 
-use std::{fmt::Display, ops::{Div, DivAssign, Mul, Neg, SubAssign}};
+use fraction::{Fraction};
 
-use fraction::{ConstOne, ConstZero, Fraction};
-
-#[derive(Eq, PartialEq, Debug, Clone)]
-pub struct Value {
-    pub finite: Fraction,
-    pub m: Fraction,
-}
-
-impl Value {
-    pub fn from(f: Fraction) -> Self {
-        Value { finite: f, m: Fraction::ZERO }
-    }
-}
-
-impl Neg for Value {
-    type Output = Self;
-    
-    fn neg(self) -> Self::Output {
-        Value {
-            finite: self.finite.neg(),
-            m: self.m,
-        }
-    }
-}
-
-impl Display for Value {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.finite.fmt(f)
-        // if self.m.is_zero() {
-        //     self.finite.fmt(f)
-        // } else {
-        //     self.finite.fmt(f);
-        //     if self.m.is_negative() {
-        //         write!(f," - ");
-        //     } else {
-        //         write!(f," + ");
-        //     }
-        //     self.m.abs().fmt(f);
-        //     write!(f,"M")
-        // }
-    }
-}
-
-impl Mul for Value {
-    type Output = Value;
-
-    fn mul(self, rhs: Self) -> Self::Output {
-        Value {
-            finite: self.finite.mul(rhs.finite),
-            m: self.m
-        }
-    }
-}
-
-impl Div for Value {
-    type Output = Value;
-
-    fn div(self, rhs: Self) -> Self::Output {
-        Value {
-            finite: self.finite.div(rhs.finite),
-            m: self.m
-        }
-    }
-}
-
-impl DivAssign for Value {
-    fn div_assign(&mut self, rhs: Self) {
-        self.finite.div_assign(rhs.finite);
-    }
-}
-
-impl SubAssign for Value {
-    fn sub_assign(&mut self, rhs: Self) {
-        self.finite.sub_assign(rhs.finite);
-    }
-}
-
-impl PartialOrd for Value {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        self.finite.partial_cmp(&other.finite)
-    }
-}
-
-impl Ord for Value {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.finite.cmp(&other.finite)
-    }
-}
-
-fn zero() -> Value {
-    Value { finite: Fraction::ZERO, m: Fraction::ZERO }
-}
-
-fn one() -> Value {
-    Value { finite: Fraction::ONE, m: Fraction::ZERO }
-}
+use crate::simplex::value::Value;
+use crate::simplex::value;
 
 pub type Coefficients = Vec<Value>;
 pub type Variable = usize;
@@ -170,10 +76,10 @@ fn initial_objective_equation(
     for coeff in &mut coefficients {
         *coeff = -coeff.clone();
     }
-    coefficients.append(&mut vec![zero(); nonbasic_var_count]);
+    coefficients.append(&mut vec![value::zero(); nonbasic_var_count]);
     Equation {
         coefficients: coefficients,
-        constraint: zero(),
+        constraint: value::zero(),
     }
 }
 
@@ -186,7 +92,7 @@ fn initial_rows(
         let row = SimplexRow {
             basic_variable: nonbasic_var_count + var,
             equation: equality_constraint(constraint, var, functional_constraints.len()),
-            ratio: zero(),
+            ratio: value::zero(),
         };
         rows.push(row);
     }
@@ -213,9 +119,9 @@ fn with_slack_variable(
     let mut coeffs = coefficients.clone();
     for var in 0..basic_var_count {
         coeffs.push(if var == target_var {
-            one()
+            value::one()
         } else {
-            zero()
+            value::zero()
         });
     }
     coeffs
@@ -225,7 +131,7 @@ fn initial_point(
     objective_fn_coeffs: &Coefficients,
     constraints: &Vec<UpperBoundConstraint>,
 ) -> Vec<Value> {
-    let mut point = vec![zero(); objective_fn_coeffs.len()];
+    let mut point = vec![value::zero(); objective_fn_coeffs.len()];
     for constraint in constraints {
         point.push(constraint.bound.clone());
     }
@@ -256,7 +162,7 @@ fn is_optimal(problem: &Problem) -> bool {
         .objective_equation
         .coefficients
         .iter()
-        .all(|v| *v >= zero())
+        .all(|v| *v >= value::zero())
 }
 
 fn pivot_variable(problem: &Problem) -> Option<Variable> {
@@ -282,7 +188,7 @@ fn pivot_row_idx(problem: &Problem) -> Option<usize> {
         .iter()
         .enumerate()
         .filter(|(_, row)| {
-            row.ratio > zero() && row.ratio != Value::from(Fraction::Infinity(fraction::Sign::Plus))
+            row.ratio > value::zero() && row.ratio != Value::from(Fraction::Infinity(fraction::Sign::Plus))
         })
         .min_by(|(_, r1), (_, r2)| r1.ratio.cmp(&r2.ratio))
         .unzip()
@@ -299,7 +205,7 @@ fn normalize_equation(problem: &mut Problem, equation_idx: usize, variable: Vari
     let var_count = coeffs.len();
     for var in 0..var_count {
         if var == variable {
-            coeffs[var] = one();
+            coeffs[var] = value::one();
         } else {
             coeffs[var] /= coeff.clone();
         }
@@ -334,7 +240,7 @@ fn reduce_equation(equation: &mut Equation, pivot_equation: &Equation, variable:
 }
 
 fn set_new_point(problem: &mut Problem) {
-    problem.point.fill(zero());
+    problem.point.fill(value::zero());
     for row in problem.rows.iter() {
         problem.point[row.basic_variable] = row.equation.constraint.clone();
     }

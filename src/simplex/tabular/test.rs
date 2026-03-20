@@ -12,6 +12,7 @@ mod normalize_equation;
 
 mod reduce_equations;
 
+use crate::simplex::value::Value;
 use crate::simplex::tabular::{self as sut, EmptyObserver};
 use crate::simplex::{
     test::frac,
@@ -37,7 +38,7 @@ impl sut::ProblemObserver for MockObserver {
 
 pub fn upper_bound_constraint(
     coefficients: sut::Coefficients,
-    bound: sut::Value) -> sut::UpperBoundConstraint {
+    bound: Value) -> sut::UpperBoundConstraint {
     sut::UpperBoundConstraint {
         coefficients,
         bound,
