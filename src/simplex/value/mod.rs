@@ -1,98 +1,86 @@
+#[cfg(test)]
+mod test;
+
 use std::{fmt::Display, ops::{Div, DivAssign, Mul, Neg, SubAssign}};
 
-use fraction::{ConstOne, ConstZero, Fraction};
+use fraction::{ConstOne, ConstZero, Fraction, Signed, Zero};
 
-#[derive(Eq, PartialEq, Debug, Clone)]
-pub struct Value {
-    pub finite: Fraction,
-    pub m: Fraction,
-}
 
-impl Value {
-    pub fn from(f: Fraction) -> Self {
-        Value { finite: f, m: Fraction::ZERO }
-    }
-}
-
-impl Neg for Value {
-    type Output = Self;
-    
-    fn neg(self) -> Self::Output {
-        Value {
-            finite: self.finite.neg(),
-            m: self.m,
-        }
-    }
-}
-
-impl Display for Value {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.finite.fmt(f)
-        // if self.m.is_zero() {
-        //     self.finite.fmt(f)
-        // } else {
-        //     self.finite.fmt(f);
-        //     if self.m.is_negative() {
-        //         write!(f," - ");
-        //     } else {
-        //         write!(f," + ");
-        //     }
-        //     self.m.abs().fmt(f);
-        //     write!(f,"M")
-        // }
-    }
-}
-
-impl Mul for Value {
-    type Output = Value;
-
-    fn mul(self, rhs: Self) -> Self::Output {
-        Value {
-            finite: self.finite.mul(rhs.finite),
-            m: self.m
-        }
-    }
-}
-
-impl Div for Value {
-    type Output = Value;
-
-    fn div(self, rhs: Self) -> Self::Output {
-        Value {
-            finite: self.finite.div(rhs.finite),
-            m: self.m
-        }
-    }
-}
-
-impl DivAssign for Value {
-    fn div_assign(&mut self, rhs: Self) {
-        self.finite.div_assign(rhs.finite);
-    }
-}
-
-impl SubAssign for Value {
-    fn sub_assign(&mut self, rhs: Self) {
-        self.finite.sub_assign(rhs.finite);
-    }
-}
-
-impl PartialOrd for Value {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        self.finite.partial_cmp(&other.finite)
-    }
-}
-
-impl Ord for Value {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.finite.cmp(&other.finite)
-    }
-}
+pub type Value = Fraction;
 
 pub fn zero() -> Value {
-    Value { finite: Fraction::ZERO, m: Fraction::ZERO }
+    Fraction::ZERO
 }
 
 pub fn one() -> Value {
-    Value { finite: Fraction::ONE, m: Fraction::ZERO }
+    Fraction::ONE
+}
+
+#[derive(Debug,PartialEq,Eq)]
+pub struct ZValue {
+    finite: Value,
+    m: Value
+}
+
+impl ZValue {
+    pub fn from(finite: Value) -> ZValue {
+        ZValue { finite: finite, m: zero() }
+    }
+
+    pub fn from_m(finite: Value, m: Value) -> ZValue {
+        ZValue { finite: finite, m: m }
+    }
+}
+
+impl Neg for ZValue {
+    type Output = ZValue;
+
+    fn neg(self) -> Self::Output {
+        ZValue{
+            finite: self.finite.neg(),
+            m: self.m.neg()
+        }
+    }
+}
+
+impl Mul<Value> for ZValue {
+    type Output = ZValue;
+
+    fn mul(self, rhs: Value) -> Self::Output {
+        ZValue{
+            finite: self.finite * rhs,
+            m : self.m * rhs
+        }
+    }
+}
+
+impl Div<Value> for ZValue {
+    type Output = ZValue;
+
+    fn div(self, rhs: Value) -> Self::Output {
+        ZValue{
+            finite: self.finite / rhs,
+            m : self.m / rhs
+        }
+    }
+}
+
+impl Display for ZValue {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.m.is_zero() {
+            self.finite.fmt(f)
+        } else if self.finite.is_zero() {
+            let _ = self.m.fmt(f);
+            write!(f,"M")
+        } else {
+            let _ = self.finite.fmt(f);
+            if self.m.is_negative() {
+                let _ = write!(f," - ");
+            } else {
+                let _ = write!(f," + ");
+            }
+            let _ = self.m.abs().fmt(f);
+            write!(f,"M")
+        }
+    }
 }
