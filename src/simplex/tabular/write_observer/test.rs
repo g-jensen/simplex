@@ -1,15 +1,15 @@
 use crate::simplex::tabular::write_observer::{self as sut};
 use crate::simplex::tabular::{Equation, Problem, ProblemObserver, SimplexRow};
-use fraction::{ConstZero, Fraction};
+use crate::simplex::test::frac;
 
 fn make_one_variable_problem() -> Problem {
     Problem {
         objective_equation: Equation {
-            coefficients: vec![Fraction::from(-5)],
-            constraint: Fraction::ZERO,
+            coefficients: vec![-frac(5,1)],
+            constraint: frac(0,1),
         },
         rows: vec![],
-        point: vec![Fraction::ZERO],
+        point: vec![frac(0,1)],
     }
 }
 
@@ -34,42 +34,42 @@ fn formats_two_variable_two_constraint_problem() {
     let problem = Problem {
         objective_equation: Equation {
             coefficients: vec![
-                Fraction::from(-500),
-                Fraction::from(-4),
-                Fraction::ZERO,
-                Fraction::ZERO,
+                -frac(500,1),
+                -frac(4,1),
+                frac(0,1),
+                frac(0,1),
             ],
-            constraint: Fraction::ZERO,
+            constraint: frac(0,1),
         },
         rows: vec![
             SimplexRow {
                 basic_variable: 2,
                 equation: Equation {
                     coefficients: vec![
-                        Fraction::from(6),
-                        Fraction::from(4),
-                        Fraction::from(1),
-                        Fraction::ZERO,
+                        frac(6,1),
+                        frac(4,1),
+                        frac(1,1),
+                        frac(0,1),
                     ],
-                    constraint: Fraction::from(24),
+                    constraint: frac(24,1),
                 },
-                ratio: Fraction::from(4),
+                ratio: frac(4,1),
             },
             SimplexRow {
                 basic_variable: 3,
                 equation: Equation {
                     coefficients: vec![
-                        Fraction::from(1),
-                        Fraction::from(2),
-                        Fraction::ZERO,
-                        Fraction::from(1),
+                        frac(1,1),
+                        frac(2,1),
+                        frac(0,1),
+                        frac(1,1),
                     ],
-                    constraint: Fraction::from(6),
+                    constraint: frac(6,1),
                 },
-                ratio: Fraction::from(6),
+                ratio: frac(6,1),
             },
         ],
-        point: vec![Fraction::ZERO; 4],
+        point: vec![frac(0,1); 4],
     };
     let mut output = Vec::new();
     {
@@ -91,18 +91,18 @@ fn formats_two_variable_two_constraint_problem() {
 fn formats_with_one_constraint_row() {
     let problem = Problem {
         objective_equation: Equation {
-            coefficients: vec![Fraction::from(-5)],
-            constraint: Fraction::ZERO,
+            coefficients: vec![-frac(5,1)],
+            constraint: frac(0,1),
         },
         rows: vec![SimplexRow {
             basic_variable: 1,
             equation: Equation {
-                coefficients: vec![Fraction::from(2)],
-                constraint: Fraction::from(10),
+                coefficients: vec![frac(2,1)],
+                constraint: frac(10,1),
             },
-            ratio: Fraction::from(5),
+            ratio: frac(5,1),
         }],
-        point: vec![Fraction::ZERO],
+        point: vec![frac(0,1)],
     };
     let mut output = Vec::new();
     {
