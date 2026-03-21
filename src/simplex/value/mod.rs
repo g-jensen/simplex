@@ -16,8 +16,6 @@ pub fn one() -> Value {
     Fraction::ONE
 }
 
-// PartialEq, PartialOrd
-
 #[derive(Clone,Debug,PartialEq,Eq)]
 pub struct ZValue {
     finite: Value,
@@ -40,16 +38,20 @@ impl ZValue {
 
 impl PartialOrd for ZValue {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        match self.finite.partial_cmp(&other.finite) {
+        match self.m.partial_cmp(&other.m) {
             Some(core::cmp::Ordering::Equal) => {}
             ord => return ord,
         }
-        self.m.partial_cmp(&other.m)
+        self.finite.partial_cmp(&other.finite)
     }
 }
 
 impl Ord for ZValue {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        match self.m.cmp(&other.m) {
+            core::cmp::Ordering::Equal => {}
+            ord => return ord,
+        }
         self.finite.cmp(&other.finite)
     }
 }

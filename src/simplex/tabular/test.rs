@@ -12,8 +12,8 @@ mod normalize_equation;
 
 mod reduce_equations;
 
-use crate::simplex::test::zfrac;
-use crate::simplex::value::Value;
+use crate::simplex::test::{zfrac, zfrac_m};
+use crate::simplex::value::{self, Value, ZValue};
 use crate::simplex::tabular::{self as sut, EmptyObserver};
 use crate::simplex::{
     test::frac,
@@ -143,6 +143,53 @@ fn maximizes_two_dependent_variable_two_constraint_symmetric_problem() {
     let problem = sut::Problem::new(&objective_function,&fn_constraints);
     let solns = sut::solve(problem,&mut EmptyObserver::new());
     let expected_solns = vec![frac(1,1), frac(1,1), frac(0,1), frac(0,1)];
+    assert_eq!(expected_solns, solns);
+}
+
+#[test]
+fn solves_big_m_problem() {
+    let problem = sut::Problem{
+        objective_equation: sut::ObjectiveEquation{
+            coefficients: vec![
+                zfrac_m(-frac(2,1), -frac(2,1)),
+                zfrac_m(-frac(3,1), -frac(1,1)),
+                ZValue::zero(),
+                ZValue::zero()
+            ],
+            constraint: zfrac_m(value::zero(),-frac(3,1))
+        },
+        rows: vec![
+            sut::SimplexRow{
+                basic_variable: 2,
+                equation: sut::Equation{
+                    coefficients: vec![
+                        frac(1,1),
+                        frac(2,1),
+                        frac(1,1),
+                        value::zero()
+                    ],
+                    constraint: frac(4,1)
+                },
+                ratio: value::zero()
+            },
+            sut::SimplexRow{
+                basic_variable: 3,
+                equation: sut::Equation{
+                    coefficients: vec![
+                        frac(1,1),
+                        frac(1,1),
+                        value::zero(),
+                        frac(1,1)
+                    ],
+                    constraint: frac(3,1)
+                },
+                ratio: value::zero()
+            }
+        ],
+        point: vec![value::zero(),value::zero(),frac(4,1),frac(3,1)]
+    };
+    let solns = sut::solve(problem,&mut EmptyObserver::new());
+    let expected_solns = vec![frac(3,1), value::zero(), frac(1,1), value::zero()];
     assert_eq!(expected_solns, solns);
 }
 
