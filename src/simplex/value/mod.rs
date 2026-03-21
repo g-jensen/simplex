@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod test;
 
-use std::{fmt::Display, ops::{Div, DivAssign, Mul, Neg, SubAssign}};
+use std::{fmt::Display, ops::{Add, Div, Mul, Neg}};
 
 use fraction::{ConstOne, ConstZero, Fraction, Signed, Zero};
 
@@ -16,7 +16,9 @@ pub fn one() -> Value {
     Fraction::ONE
 }
 
-#[derive(Debug,PartialEq,Eq)]
+// PartialEq, PartialOrd
+
+#[derive(Clone,Debug,PartialEq,Eq)]
 pub struct ZValue {
     finite: Value,
     m: Value
@@ -29,6 +31,37 @@ impl ZValue {
 
     pub fn from_m(finite: Value, m: Value) -> ZValue {
         ZValue { finite: finite, m: m }
+    }
+
+    pub fn zero() -> ZValue {
+        ZValue::from(zero())
+    }
+}
+
+impl PartialOrd for ZValue {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        match self.finite.partial_cmp(&other.finite) {
+            Some(core::cmp::Ordering::Equal) => {}
+            ord => return ord,
+        }
+        self.m.partial_cmp(&other.m)
+    }
+}
+
+impl Ord for ZValue {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.finite.cmp(&other.finite)
+    }
+}
+
+impl Add for ZValue {
+    type Output = ZValue;
+
+    fn add(self, rhs: ZValue) -> Self::Output {
+        ZValue{
+            finite: self.finite + rhs.finite,
+            m : self.m + rhs.m
+        }
     }
 }
 

@@ -5,7 +5,7 @@ mod test;
 
 use fraction::{Fraction};
 
-use crate::simplex::value::Value;
+use crate::simplex::value::{Value, ZValue};
 use crate::simplex::value;
 
 pub type Coefficients = Vec<Value>;
@@ -14,6 +14,14 @@ pub type Variable = usize;
 pub struct UpperBoundConstraint {
     pub coefficients: Coefficients,
     pub bound: Value
+}
+
+pub type ObjectiveCoefficients = Vec<ZValue>;
+
+#[derive(PartialEq, Debug, Clone)]
+pub struct ObjectiveEquation {
+    pub coefficients: ObjectiveCoefficients,
+    pub constraint: ZValue,
 }
 
 #[derive(PartialEq, Debug, Clone)]
@@ -31,7 +39,7 @@ pub struct SimplexRow {
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Problem {
-    pub objective_equation: Equation,
+    pub objective_equation: ObjectiveEquation,
     pub rows: Vec<SimplexRow>,
     pub point: Coefficients,
 }
@@ -54,32 +62,32 @@ impl EmptyObserver {
 
 impl Problem {
     pub fn new(
-        objective_fn_coeffs: &Coefficients,
+        objective_coeffs: &ObjectiveCoefficients,
         functional_constraints: &Vec<UpperBoundConstraint>,
     ) -> Self {
         Self {
             objective_equation: initial_objective_equation(
-                objective_fn_coeffs,
+                objective_coeffs,
                 functional_constraints.len(),
             ),
-            rows: initial_rows(&functional_constraints, objective_fn_coeffs.len()),
-            point: initial_point(objective_fn_coeffs, functional_constraints),
+            rows: initial_rows(&functional_constraints, objective_coeffs.len()),
+            point: initial_point(objective_coeffs, functional_constraints),
         }
     }
 }
 
 fn initial_objective_equation(
-    objective_fn_coeffs: &Coefficients,
+    objective_fn_coeffs: &ObjectiveCoefficients,
     nonbasic_var_count: usize,
-) -> Equation {
+) -> ObjectiveEquation {
     let mut coefficients = objective_fn_coeffs.clone();
     for coeff in &mut coefficients {
         *coeff = -coeff.clone();
     }
-    coefficients.append(&mut vec![value::zero(); nonbasic_var_count]);
-    Equation {
+    coefficients.append(&mut vec![ZValue::zero(); nonbasic_var_count]);
+    ObjectiveEquation {
         coefficients: coefficients,
-        constraint: value::zero(),
+        constraint: ZValue::zero(),
     }
 }
 
@@ -128,7 +136,7 @@ fn with_slack_variable(
 }
 
 fn initial_point(
-    objective_fn_coeffs: &Coefficients,
+    objective_fn_coeffs: &ObjectiveCoefficients,
     constraints: &Vec<UpperBoundConstraint>,
 ) -> Coefficients {
     let mut point = vec![value::zero(); objective_fn_coeffs.len()];
@@ -162,7 +170,7 @@ fn is_optimal(problem: &Problem) -> bool {
         .objective_equation
         .coefficients
         .iter()
-        .all(|v| *v >= value::zero())
+        .all(|v| *v >= ZValue::zero())
 }
 
 fn pivot_variable(problem: &Problem) -> Option<Variable> {
@@ -218,7 +226,7 @@ fn reduce_equations(problem: &mut Problem, pivot_row_idx: usize, variable: Varia
     for row in other_rows {
         reduce_equation(&mut row.equation, &pivot_row.equation, variable);
     }
-    reduce_equation(
+    reduce_objective_equation(
         &mut problem.objective_equation,
         &pivot_row.equation,
         variable,
@@ -234,9 +242,17 @@ fn iter_around_mut<T>(slice: &mut [T], index: usize) -> (&mut T, impl Iterator<I
 fn reduce_equation(equation: &mut Equation, pivot_equation: &Equation, variable: Variable) {
     let factor = equation.coefficients[variable].clone();
     for (k, coeff) in equation.coefficients.iter_mut().enumerate() {
-        *coeff -= factor.clone() * pivot_equation.coefficients[k].clone();
+        *coeff = coeff.clone() + -(factor.clone() * pivot_equation.coefficients[k].clone());
     }
-    equation.constraint -= factor * pivot_equation.constraint.clone();
+    equation.constraint = equation.constraint.clone() + -(factor * pivot_equation.constraint.clone());
+}
+
+fn reduce_objective_equation(equation: &mut ObjectiveEquation, pivot_equation: &Equation, variable: Variable) {
+    let factor = equation.coefficients[variable].clone();
+    for (k, coeff) in equation.coefficients.iter_mut().enumerate() {
+        *coeff = coeff.clone() + -(factor.clone() * pivot_equation.coefficients[k].clone());
+    }
+    equation.constraint = equation.constraint.clone() + -(factor * pivot_equation.constraint.clone());
 }
 
 fn set_new_point(problem: &mut Problem) {

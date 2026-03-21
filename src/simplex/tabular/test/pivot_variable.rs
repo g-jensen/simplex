@@ -1,15 +1,15 @@
 mod pivot_variable {
     use crate::simplex::{
         tabular::{self as sut},
-        test::frac,
+        test::{zfrac},
     };
 
     #[test]
     fn empty_objective_has_no_pivot() {
         let problem = sut::Problem {
-            objective_equation: sut::Equation {
+            objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: frac(0, 1),
+                constraint: zfrac(0, 1),
             },
             rows: vec![],
             point: vec![],
@@ -20,9 +20,9 @@ mod pivot_variable {
     #[test]
     fn single_var_is_pivot() {
         let problem = sut::Problem {
-            objective_equation: sut::Equation {
-                coefficients: vec![frac(1, 1)],
-                constraint: frac(0, 1),
+            objective_equation: sut::ObjectiveEquation {
+                coefficients: vec![zfrac(1, 1)],
+                constraint: zfrac(0, 1),
             },
             rows: vec![],
             point: vec![],
@@ -33,9 +33,9 @@ mod pivot_variable {
     #[test]
     fn smallest_var_is_pivot() {
         let problem = sut::Problem {
-            objective_equation: sut::Equation {
-                coefficients: vec![frac(1, 1), -frac(2, 1), frac(0, 1)],
-                constraint: frac(0, 1),
+            objective_equation: sut::ObjectiveEquation {
+                coefficients: vec![zfrac(1, 1), -zfrac(2, 1), zfrac(0, 1)],
+                constraint: zfrac(0, 1),
             },
             rows: vec![],
             point: vec![],

@@ -9,11 +9,12 @@ use crate::simplex::value::Value;
 use crate::simplex::tabular::write_observer::WriteObserver;
 use crate::simplex::tabular::Problem;
 use crate::simplex::tabular::solve;
+use crate::simplex::value::ZValue;
 
 fn main() {
     let mut writer = stdout();
     let mut observer = WriteObserver::new(&mut writer);
-    let objective_fn_coeffs = vec![Value::from(Fraction::from(1)), Value::from(Fraction::from(2))];
+    let objective_fn_coeffs = vec![ZValue::from(Fraction::from(1)), ZValue::from(Fraction::from(2))];
     let functional_constraints = vec![
         UpperBoundConstraint {
             coefficients: vec![Value::from(Fraction::from(1)),Value::from(Fraction::from(1))],

@@ -1,12 +1,12 @@
 use crate::simplex::tabular::write_observer::{self as sut};
-use crate::simplex::tabular::{Equation, Problem, ProblemObserver, SimplexRow};
-use crate::simplex::test::frac;
+use crate::simplex::tabular::{Equation, ObjectiveEquation, Problem, ProblemObserver, SimplexRow};
+use crate::simplex::test::{frac, zfrac};
 
 fn make_one_variable_problem() -> Problem {
     Problem {
-        objective_equation: Equation {
-            coefficients: vec![-frac(5,1)],
-            constraint: frac(0,1),
+        objective_equation: ObjectiveEquation {
+            coefficients: vec![-zfrac(5,1)],
+            constraint: zfrac(0,1),
         },
         rows: vec![],
         point: vec![frac(0,1)],
@@ -32,14 +32,14 @@ fn formats_objective_row_only() {
 #[test]
 fn formats_two_variable_two_constraint_problem() {
     let problem = Problem {
-        objective_equation: Equation {
+        objective_equation: ObjectiveEquation {
             coefficients: vec![
-                -frac(500,1),
-                -frac(4,1),
-                frac(0,1),
-                frac(0,1),
+                -zfrac(500,1),
+                -zfrac(4,1),
+                zfrac(0,1),
+                zfrac(0,1),
             ],
-            constraint: frac(0,1),
+            constraint: zfrac(0,1),
         },
         rows: vec![
             SimplexRow {
@@ -90,9 +90,9 @@ fn formats_two_variable_two_constraint_problem() {
 #[test]
 fn formats_with_one_constraint_row() {
     let problem = Problem {
-        objective_equation: Equation {
-            coefficients: vec![-frac(5,1)],
-            constraint: frac(0,1),
+        objective_equation: ObjectiveEquation {
+            coefficients: vec![-zfrac(5,1)],
+            constraint: zfrac(0,1),
         },
         rows: vec![SimplexRow {
             basic_variable: 1,

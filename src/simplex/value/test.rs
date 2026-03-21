@@ -37,6 +37,27 @@ fn zvalue_constructs_from_fraction_and_m() {
 }
 
 #[test]
+fn zvalue_add_finite() {
+    let f1 = sut::ZValue::from(frac(1,2));
+    let f2 = sut::ZValue::from(frac(2,3));
+    let prod = sut::ZValue::from(frac(7,6));
+    assert_eq!(prod, f1+f2);
+
+    let f1 = sut::ZValue::from(frac(5,2));
+    let f2 = sut::ZValue::from(frac(3,2));
+    let prod = sut::ZValue::from(frac(8,2));
+    assert_eq!(prod, f1+f2);
+}
+
+#[test]
+fn zvalue_add_finite_and_m() {
+    let f1 = sut::ZValue::from_m(frac(1,2), frac(3,4));
+    let f2 = sut::ZValue::from_m(frac(5,6),frac(7,8));
+    let prod = sut::ZValue::from_m(frac(8,6),frac(13,8));
+    assert_eq!(prod, f1+f2);
+}
+
+#[test]
 fn zvalue_calculates_negative_of_finite() {
     let value = sut::ZValue::from(frac(1,2));
     assert_eq!(sut::ZValue{
@@ -143,7 +164,7 @@ fn zvalue_div_finite() {
 }
 
 #[test]
-fn div_finite_and_m() {
+fn zvalue_div_finite_and_m() {
     let f1 = sut::ZValue::from_m(frac(1,2), frac(3,4));
     let f2 = sut::Value::from(frac(5,6));
     let prod = sut::ZValue::from_m(frac(6,10),frac(18,20));

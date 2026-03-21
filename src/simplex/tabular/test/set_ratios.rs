@@ -1,15 +1,15 @@
 mod set_ratios {
     use crate::simplex::{
         tabular::{self as sut},
-        test::frac,
+        test::{frac, zfrac},
     };
 
     #[test]
     fn recalculates_ratio_for_row() {
         let mut problem = sut::Problem {
-            objective_equation: sut::Equation {
+            objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: frac(0, 1),
+                constraint: zfrac(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
@@ -28,9 +28,9 @@ mod set_ratios {
     #[test]
     fn recalculates_ratio_for_rows() {
         let mut problem = sut::Problem {
-            objective_equation: sut::Equation {
+            objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: frac(0, 1),
+                constraint: zfrac(0, 1),
             },
             rows: vec![
                 sut::SimplexRow {
@@ -60,9 +60,9 @@ mod set_ratios {
     #[test]
     fn recalculates_ratio_for_specified_var() {
         let mut problem = sut::Problem {
-            objective_equation: sut::Equation {
+            objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: frac(0, 1),
+                constraint: zfrac(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,

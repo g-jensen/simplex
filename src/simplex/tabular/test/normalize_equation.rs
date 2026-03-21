@@ -1,15 +1,15 @@
 mod normalize_equation {
     use crate::simplex::{
         tabular::{self as sut},
-        test::frac,
+        test::{frac, zfrac},
     };
 
     #[test]
     fn sets_single_coefficient_to_one() {
         let mut problem = sut::Problem {
-            objective_equation: sut::Equation {
+            objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: frac(0, 1),
+                constraint: zfrac(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
@@ -28,9 +28,9 @@ mod normalize_equation {
     #[test]
     fn divides_other_coefficients_by_pivot() {
         let mut problem = sut::Problem {
-            objective_equation: sut::Equation {
+            objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: frac(0, 1),
+                constraint: zfrac(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
@@ -52,9 +52,9 @@ mod normalize_equation {
     #[test]
     fn normalizes_on_non_first_variable() {
         let mut problem = sut::Problem {
-            objective_equation: sut::Equation {
+            objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: frac(0, 1),
+                constraint: zfrac(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
@@ -76,9 +76,9 @@ mod normalize_equation {
     #[test]
     fn leaves_other_coefficients_unchanged_when_pivot_is_one() {
         let mut problem = sut::Problem {
-            objective_equation: sut::Equation {
+            objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: frac(0, 1),
+                constraint: zfrac(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
@@ -100,9 +100,9 @@ mod normalize_equation {
     #[test]
     fn normalizes_correct_row_when_multiple_rows_exist() {
         let mut problem = sut::Problem {
-            objective_equation: sut::Equation {
+            objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: frac(0, 1),
+                constraint: zfrac(0, 1),
             },
             rows: vec![
                 sut::SimplexRow {

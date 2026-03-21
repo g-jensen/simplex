@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod test;
 
-use super::{Problem, ProblemObserver, SimplexRow, Coefficients, Variable};
-use std::io::Write;
+use super::{Problem, ProblemObserver, SimplexRow, Variable};
+use std::{fmt::Display, io::Write};
 
 struct RowStrings {
     bv: String,
@@ -108,7 +108,7 @@ fn format_row(row_data: &RowStrings, widths: &ColumnWidths) -> String {
     row
 }
 
-fn stringify_coefficients(coefficients: &Coefficients) -> Vec<String> {
+fn stringify_coefficients<T: Display>(coefficients: &Vec<T>) -> Vec<String> {
     coefficients.iter().map(|c| c.to_string()).collect()
 }
 
