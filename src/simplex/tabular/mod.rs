@@ -33,7 +33,7 @@ pub struct SimplexRow {
 pub struct Problem {
     pub objective_equation: Equation,
     pub rows: Vec<SimplexRow>,
-    pub point: Vec<Value>,
+    pub point: Coefficients,
 }
 
 pub trait ProblemObserver {
@@ -112,10 +112,10 @@ fn equality_constraint(
 }
 
 fn with_slack_variable(
-    coefficients: &Vec<Value>,
+    coefficients: &Coefficients,
     target_var: Variable,
     basic_var_count: usize,
-) -> Vec<Value> {
+) -> Coefficients {
     let mut coeffs = coefficients.clone();
     for var in 0..basic_var_count {
         coeffs.push(if var == target_var {
@@ -130,7 +130,7 @@ fn with_slack_variable(
 fn initial_point(
     objective_fn_coeffs: &Coefficients,
     constraints: &Vec<UpperBoundConstraint>,
-) -> Vec<Value> {
+) -> Coefficients {
     let mut point = vec![value::zero(); objective_fn_coeffs.len()];
     for constraint in constraints {
         point.push(constraint.bound.clone());
@@ -138,7 +138,7 @@ fn initial_point(
     point
 }
 
-pub fn solve(mut problem: Problem, observer: &mut impl ProblemObserver) -> Vec<Value> {
+pub fn solve(mut problem: Problem, observer: &mut impl ProblemObserver) -> Coefficients {
     while !is_optimal(&problem) {
         let Some(pivot_variable) = pivot_variable(&problem) else {
             return problem.point;
