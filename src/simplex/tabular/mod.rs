@@ -62,18 +62,27 @@ impl EmptyObserver {
 
 impl Problem {
     pub fn new(
-        objective_coeffs: &ObjectiveCoefficients,
+        objective_coeffs: &Coefficients,
         functional_constraints: &Vec<UpperBoundConstraint>,
     ) -> Self {
+        let objective_coeffs = initial_objective_coeffs(objective_coeffs);
         Self {
             objective_equation: initial_objective_equation(
-                objective_coeffs,
+                &objective_coeffs,
                 functional_constraints.len(),
             ),
             rows: initial_rows(&functional_constraints, objective_coeffs.len()),
-            point: initial_point(objective_coeffs, functional_constraints),
+            point: initial_point(&objective_coeffs, functional_constraints),
         }
     }
+}
+
+fn initial_objective_coeffs(coeffs: &Coefficients) -> ObjectiveCoefficients {
+    let mut obj_coeffs = vec![];
+    for coeff in coeffs {
+        obj_coeffs.push(ZValue::from(coeff.clone()));
+    }
+    obj_coeffs
 }
 
 fn initial_objective_equation(
