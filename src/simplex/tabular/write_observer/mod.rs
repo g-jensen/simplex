@@ -4,7 +4,7 @@ mod test;
 use crate::simplex::objectivevalue::ObjectiveValue;
 use crate::simplex::Variable;
 
-use super::primal::{Problem, ProblemObserver, SimplexRow};
+use super::{Problem, ProblemObserver, SimplexRow};
 use std::{fmt::Display, io::Write};
 
 struct RowStrings {

@@ -1,8 +1,8 @@
 use crate::simplex::objectivevalue::ObjectiveEquation;
 use crate::simplex::tabular::primal::mobjectivevalue::test::mvalue_from;
 use crate::simplex::tabular::primal::mobjectivevalue::MObjectiveValue;
-use crate::simplex::tabular::primal::{Equation, Problem, ProblemObserver, SimplexRow};
 use crate::simplex::tabular::write_observer::{self as sut};
+use crate::simplex::tabular::{Equation, Problem, ProblemObserver, SimplexRow};
 use crate::simplex::test::frac;
 
 type MProblem = Problem<MObjectiveValue>;

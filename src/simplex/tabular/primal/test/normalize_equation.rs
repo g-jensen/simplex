@@ -5,6 +5,7 @@ mod normalize_equation {
             mobjectivevalue::test::mvalue_from,
             test::{MObjectiveEquation, MProblem},
         },
+        tabular::{Equation, SimplexRow},
         test::frac,
     };
 
@@ -15,9 +16,9 @@ mod normalize_equation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
-            rows: vec![sut::SimplexRow {
+            rows: vec![SimplexRow {
                 basic_variable: 0,
-                equation: sut::Equation {
+                equation: Equation {
                     coefficients: vec![frac(5, 1)],
                     constraint: frac(10, 1),
                 },
@@ -36,9 +37,9 @@ mod normalize_equation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
-            rows: vec![sut::SimplexRow {
+            rows: vec![SimplexRow {
                 basic_variable: 0,
-                equation: sut::Equation {
+                equation: Equation {
                     coefficients: vec![frac(2, 1), frac(4, 1), frac(6, 1)],
                     constraint: frac(10, 1),
                 },
@@ -60,9 +61,9 @@ mod normalize_equation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
-            rows: vec![sut::SimplexRow {
+            rows: vec![SimplexRow {
                 basic_variable: 0,
-                equation: sut::Equation {
+                equation: Equation {
                     coefficients: vec![frac(3, 1), frac(6, 1), frac(9, 1)],
                     constraint: frac(12, 1),
                 },
@@ -84,9 +85,9 @@ mod normalize_equation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
-            rows: vec![sut::SimplexRow {
+            rows: vec![SimplexRow {
                 basic_variable: 0,
-                equation: sut::Equation {
+                equation: Equation {
                     coefficients: vec![frac(1, 1), frac(3, 1), frac(5, 1)],
                     constraint: frac(8, 1),
                 },
@@ -109,17 +110,17 @@ mod normalize_equation {
                 constraint: mvalue_from(0, 1),
             },
             rows: vec![
-                sut::SimplexRow {
+                SimplexRow {
                     basic_variable: 0,
-                    equation: sut::Equation {
+                    equation: Equation {
                         coefficients: vec![frac(2, 1), frac(4, 1)],
                         constraint: frac(6, 1),
                     },
                     ratio: frac(0, 1),
                 },
-                sut::SimplexRow {
+                SimplexRow {
                     basic_variable: 1,
-                    equation: sut::Equation {
+                    equation: Equation {
                         coefficients: vec![frac(3, 1), frac(9, 1)],
                         constraint: frac(12, 1),
                     },

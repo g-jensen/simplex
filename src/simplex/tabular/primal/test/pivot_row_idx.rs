@@ -5,6 +5,7 @@ mod pivot_row_idx {
             mobjectivevalue::test::mvalue_from,
             test::{MObjectiveEquation, MProblem},
         },
+        tabular::{Equation, SimplexRow},
         test::frac,
     };
 
@@ -29,9 +30,9 @@ mod pivot_row_idx {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
-            rows: vec![sut::SimplexRow {
+            rows: vec![SimplexRow {
                 basic_variable: 0,
-                equation: sut::Equation {
+                equation: Equation {
                     coefficients: vec![frac(1, 1)],
                     constraint: frac(5, 1),
                 },
@@ -50,9 +51,9 @@ mod pivot_row_idx {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
-            rows: vec![sut::SimplexRow {
+            rows: vec![SimplexRow {
                 basic_variable: 0,
-                equation: sut::Equation {
+                equation: Equation {
                     coefficients: vec![frac(1, 1)],
                     constraint: frac(0, 1),
                 },
@@ -71,9 +72,9 @@ mod pivot_row_idx {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
-            rows: vec![sut::SimplexRow {
+            rows: vec![SimplexRow {
                 basic_variable: 0,
-                equation: sut::Equation {
+                equation: Equation {
                     coefficients: vec![frac(1, 1)],
                     constraint: -frac(5, 1),
                 },
@@ -93,25 +94,25 @@ mod pivot_row_idx {
                 constraint: mvalue_from(0, 1),
             },
             rows: vec![
-                sut::SimplexRow {
+                SimplexRow {
                     basic_variable: 0,
-                    equation: sut::Equation {
+                    equation: Equation {
                         coefficients: vec![frac(1, 1)],
                         constraint: frac(10, 1),
                     },
                     ratio: frac(10, 1),
                 },
-                sut::SimplexRow {
+                SimplexRow {
                     basic_variable: 1,
-                    equation: sut::Equation {
+                    equation: Equation {
                         coefficients: vec![frac(1, 1)],
                         constraint: frac(3, 1),
                     },
                     ratio: frac(3, 1),
                 },
-                sut::SimplexRow {
+                SimplexRow {
                     basic_variable: 2,
-                    equation: sut::Equation {
+                    equation: Equation {
                         coefficients: vec![frac(1, 1)],
                         constraint: frac(7, 1),
                     },
@@ -132,25 +133,25 @@ mod pivot_row_idx {
                 constraint: mvalue_from(0, 1),
             },
             rows: vec![
-                sut::SimplexRow {
+                SimplexRow {
                     basic_variable: 0,
-                    equation: sut::Equation {
+                    equation: Equation {
                         coefficients: vec![frac(1, 1)],
                         constraint: -frac(2, 1),
                     },
                     ratio: -frac(2, 1),
                 },
-                sut::SimplexRow {
+                SimplexRow {
                     basic_variable: 1,
-                    equation: sut::Equation {
+                    equation: Equation {
                         coefficients: vec![frac(1, 1)],
                         constraint: frac(0, 1),
                     },
                     ratio: frac(0, 1),
                 },
-                sut::SimplexRow {
+                SimplexRow {
                     basic_variable: 2,
-                    equation: sut::Equation {
+                    equation: Equation {
                         coefficients: vec![frac(1, 1)],
                         constraint: frac(5, 1),
                     },
@@ -171,17 +172,17 @@ mod pivot_row_idx {
                 constraint: mvalue_from(0, 1),
             },
             rows: vec![
-                sut::SimplexRow {
+                SimplexRow {
                     basic_variable: 0,
-                    equation: sut::Equation {
+                    equation: Equation {
                         coefficients: vec![frac(1, 1)],
                         constraint: -frac(3, 1),
                     },
                     ratio: -frac(3, 1),
                 },
-                sut::SimplexRow {
+                SimplexRow {
                     basic_variable: 1,
-                    equation: sut::Equation {
+                    equation: Equation {
                         coefficients: vec![frac(1, 1)],
                         constraint: frac(0, 1),
                     },

@@ -1,6 +1,7 @@
 mod initial_point {
     use crate::simplex::{
-        tabular::primal::{self as sut, test::upper_bound_constraint},
+        tabular::primal::test::upper_bound_constraint,
+        tabular::{self as sut},
         test::frac,
         value::Value,
         Constraint,

@@ -15,12 +15,13 @@ mod reduce_equations;
 use crate::simplex::objectivevalue::ObjectiveEquation;
 use crate::simplex::tabular::primal::mobjectivevalue::test::mvalue_from_m;
 use crate::simplex::tabular::primal::mobjectivevalue::MObjectiveValue;
-use crate::simplex::tabular::primal::{self as sut, EmptyObserver};
+use crate::simplex::tabular::primal::{self as sut};
+use crate::simplex::tabular::{EmptyObserver, Equation, Problem, ProblemObserver, SimplexRow};
 use crate::simplex::test::frac;
 use crate::simplex::value::Value;
 use crate::simplex::{value, Coefficients, Constraint, Operator};
 
-pub type MProblem = sut::Problem<MObjectiveValue>;
+pub type MProblem = Problem<MObjectiveValue>;
 pub type MObjectiveEquation = ObjectiveEquation<MObjectiveValue>;
 
 struct MockObserver {
@@ -35,7 +36,7 @@ impl MockObserver {
     }
 }
 
-impl sut::ProblemObserver<MObjectiveValue> for MockObserver {
+impl ProblemObserver<MObjectiveValue> for MockObserver {
     fn observe(&mut self, problem: MProblem) {
         self.observations.push(problem);
     }
@@ -170,17 +171,17 @@ fn solves_big_m_problem() {
             constraint: mvalue_from_m(value::zero(), -frac(3, 1)),
         },
         rows: vec![
-            sut::SimplexRow {
+            SimplexRow {
                 basic_variable: 2,
-                equation: sut::Equation {
+                equation: Equation {
                     coefficients: vec![frac(1, 1), frac(2, 1), frac(1, 1), value::zero()],
                     constraint: frac(4, 1),
                 },
                 ratio: value::zero(),
             },
-            sut::SimplexRow {
+            SimplexRow {
                 basic_variable: 3,
-                equation: sut::Equation {
+                equation: Equation {
                     coefficients: vec![frac(1, 1), frac(1, 1), value::zero(), frac(1, 1)],
                     constraint: frac(3, 1),
                 },
@@ -213,17 +214,17 @@ fn creates_big_m_problem() {
             constraint: mvalue_from_m(value::zero(), -frac(3, 1)),
         },
         rows: vec![
-            sut::SimplexRow {
+            SimplexRow {
                 basic_variable: 2,
-                equation: sut::Equation {
+                equation: Equation {
                     coefficients: vec![frac(1, 1), frac(2, 1), frac(1, 1), value::zero()],
                     constraint: frac(4, 1),
                 },
                 ratio: value::zero(),
             },
-            sut::SimplexRow {
+            SimplexRow {
                 basic_variable: 3,
-                equation: sut::Equation {
+                equation: Equation {
                     coefficients: vec![frac(1, 1), frac(2, 1), value::zero(), frac(1, 1)],
                     constraint: frac(3, 1),
                 },

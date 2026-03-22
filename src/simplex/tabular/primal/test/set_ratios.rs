@@ -5,6 +5,7 @@ mod set_ratios {
             mobjectivevalue::test::mvalue_from,
             test::{MObjectiveEquation, MProblem},
         },
+        tabular::{Equation, SimplexRow},
         test::frac,
     };
 
@@ -15,9 +16,9 @@ mod set_ratios {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
-            rows: vec![sut::SimplexRow {
+            rows: vec![SimplexRow {
                 basic_variable: 0,
-                equation: sut::Equation {
+                equation: Equation {
                     coefficients: vec![frac(2, 1)],
                     constraint: frac(6, 1),
                 },
@@ -37,17 +38,17 @@ mod set_ratios {
                 constraint: mvalue_from(0, 1),
             },
             rows: vec![
-                sut::SimplexRow {
+                SimplexRow {
                     basic_variable: 0,
-                    equation: sut::Equation {
+                    equation: Equation {
                         coefficients: vec![frac(2, 1)],
                         constraint: frac(6, 1),
                     },
                     ratio: frac(0, 1),
                 },
-                sut::SimplexRow {
+                SimplexRow {
                     basic_variable: 0,
-                    equation: sut::Equation {
+                    equation: Equation {
                         coefficients: vec![frac(2, 1)],
                         constraint: frac(8, 1),
                     },
@@ -68,9 +69,9 @@ mod set_ratios {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
-            rows: vec![sut::SimplexRow {
+            rows: vec![SimplexRow {
                 basic_variable: 0,
-                equation: sut::Equation {
+                equation: Equation {
                     coefficients: vec![frac(2, 1), frac(3, 1)],
                     constraint: frac(6, 1),
                 },
