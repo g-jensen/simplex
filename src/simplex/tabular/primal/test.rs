@@ -12,10 +12,10 @@ mod normalize_equation;
 
 mod reduce_equations;
 
-use crate::simplex::tabular::primal::mvalue::test::zfrac_m;
+use crate::simplex::tabular::primal::mvalue::test::mvalue_from_m;
 use crate::simplex::{Coefficients, Constraint, Operator, value};
 use crate::simplex::value::Value;
-use crate::simplex::tabular::primal::mvalue::{ZValue};
+use crate::simplex::tabular::primal::mvalue::{MValue};
 use crate::simplex::tabular::primal::{self as sut, EmptyObserver};
 use crate::simplex::{
     test::frac,
@@ -164,12 +164,12 @@ fn solves_big_m_problem() {
     let problem = sut::Problem{
         objective_equation: sut::ObjectiveEquation{
             coefficients: vec![
-                zfrac_m(-frac(2,1), -frac(2,1)),
-                zfrac_m(-frac(3,1), -frac(1,1)),
-                ZValue::zero(),
-                ZValue::zero()
+                mvalue_from_m(-frac(2,1), -frac(2,1)),
+                mvalue_from_m(-frac(3,1), -frac(1,1)),
+                MValue::zero(),
+                MValue::zero()
             ],
-            constraint: zfrac_m(value::zero(),-frac(3,1))
+            constraint: mvalue_from_m(value::zero(),-frac(3,1))
         },
         rows: vec![
             sut::SimplexRow{
@@ -217,12 +217,12 @@ fn creates_big_m_problem() {
     let expected_problem = sut::Problem{
         objective_equation: sut::ObjectiveEquation{
             coefficients: vec![
-                zfrac_m(-frac(2,1), -frac(1,1)),
-                zfrac_m(-frac(3,1), -frac(2,1)),
-                ZValue::zero(),
-                ZValue::zero()
+                mvalue_from_m(-frac(2,1), -frac(1,1)),
+                mvalue_from_m(-frac(3,1), -frac(2,1)),
+                MValue::zero(),
+                MValue::zero()
             ],
-            constraint: zfrac_m(value::zero(),-frac(3,1))
+            constraint: mvalue_from_m(value::zero(),-frac(3,1))
         },
         rows: vec![
             sut::SimplexRow{

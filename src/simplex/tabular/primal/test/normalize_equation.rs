@@ -1,6 +1,6 @@
 mod normalize_equation {
     use crate::simplex::{
-        tabular::primal::{self as sut, mvalue::test::zfrac},
+        tabular::primal::{self as sut, mvalue::test::mvalue_from},
         test::frac,
     };
 
@@ -9,7 +9,7 @@ mod normalize_equation {
         let mut problem = sut::Problem {
             objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: zfrac(0, 1),
+                constraint: mvalue_from(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
@@ -30,7 +30,7 @@ mod normalize_equation {
         let mut problem = sut::Problem {
             objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: zfrac(0, 1),
+                constraint: mvalue_from(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
@@ -54,7 +54,7 @@ mod normalize_equation {
         let mut problem = sut::Problem {
             objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: zfrac(0, 1),
+                constraint: mvalue_from(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
@@ -78,7 +78,7 @@ mod normalize_equation {
         let mut problem = sut::Problem {
             objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: zfrac(0, 1),
+                constraint: mvalue_from(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
@@ -102,7 +102,7 @@ mod normalize_equation {
         let mut problem = sut::Problem {
             objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: zfrac(0, 1),
+                constraint: mvalue_from(0, 1),
             },
             rows: vec![
                 sut::SimplexRow {

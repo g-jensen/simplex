@@ -5,15 +5,15 @@ pub mod mvalue;
 
 use fraction::{Fraction};
 
-use crate::simplex::{value::Value, tabular::primal::mvalue::ZValue};
+use crate::simplex::{value::Value, tabular::primal::mvalue::MValue};
 use crate::simplex::{Coefficients, Constraint, Operator, Variable, value};
 
-pub type ObjectiveCoefficients = Vec<ZValue>;
+pub type ObjectiveCoefficients = Vec<MValue>;
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct ObjectiveEquation {
     pub coefficients: ObjectiveCoefficients,
-    pub constraint: ZValue,
+    pub constraint: MValue,
 }
 
 #[derive(PartialEq, Debug, Clone)]
@@ -79,14 +79,14 @@ fn find_equality_constraint(functional_constraints: &Vec<Constraint>) -> Option<
 }
 
 fn initial_objective_coeffs(coeffs: &Coefficients, equality_constraint_opt: &Option<Constraint>) -> ObjectiveCoefficients {
-    let mut obj_coeffs = vec![ZValue::zero(); coeffs.len()];
+    let mut obj_coeffs = vec![MValue::zero(); coeffs.len()];
     for i in 0..coeffs.len() {
-        obj_coeffs[i] = -ZValue::from(coeffs[i].clone());
+        obj_coeffs[i] = -MValue::from(coeffs[i].clone());
     }
     match equality_constraint_opt {
         Some(equality_constraint) => {
             for i in 0..equality_constraint.coefficients.len() {
-                obj_coeffs[i] = obj_coeffs[i].clone() + -ZValue::from_m(value::zero(),equality_constraint.coefficients[i])
+                obj_coeffs[i] = obj_coeffs[i].clone() + -MValue::from_m(value::zero(),equality_constraint.coefficients[i])
             }
         }
         None => {}
@@ -101,12 +101,12 @@ fn initial_objective_equation(
     let nonbasic_var_count = functional_constraints.len();
     let equality_constraint_opt = find_equality_constraint(functional_constraints);
     let mut coefficients = initial_objective_coeffs(objective_fn_coeffs,&equality_constraint_opt);
-    coefficients.append(&mut vec![ZValue::zero(); nonbasic_var_count]);
+    coefficients.append(&mut vec![MValue::zero(); nonbasic_var_count]);
     ObjectiveEquation {
         coefficients: coefficients,
         constraint: match equality_constraint_opt {
-            Some(equality_constraint) => -ZValue::from_m(value::zero(),equality_constraint.bound),
-            None => ZValue::zero(),
+            Some(equality_constraint) => -MValue::from_m(value::zero(),equality_constraint.bound),
+            None => MValue::zero(),
         },
     }
 }
@@ -191,7 +191,7 @@ fn is_optimal(problem: &Problem) -> bool {
         .objective_equation
         .coefficients
         .iter()
-        .all(|v| *v >= ZValue::zero())
+        .all(|v| *v >= MValue::zero())
 }
 
 fn pivot_variable(problem: &Problem) -> Option<Variable> {

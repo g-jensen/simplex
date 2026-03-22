@@ -1,6 +1,6 @@
 mod pivot_row_idx {
     use crate::simplex::{
-        tabular::primal::{self as sut, mvalue::test::zfrac},
+        tabular::primal::{self as sut, mvalue::test::mvalue_from},
         test::frac,
     };
 
@@ -9,7 +9,7 @@ mod pivot_row_idx {
         let problem = sut::Problem {
             objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: zfrac(0, 1),
+                constraint: mvalue_from(0, 1),
             },
             rows: vec![],
             point: vec![],
@@ -23,7 +23,7 @@ mod pivot_row_idx {
         let problem = sut::Problem {
             objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: zfrac(0, 1),
+                constraint: mvalue_from(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
@@ -44,7 +44,7 @@ mod pivot_row_idx {
         let problem = sut::Problem {
             objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: zfrac(0, 1),
+                constraint: mvalue_from(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
@@ -65,7 +65,7 @@ mod pivot_row_idx {
         let problem = sut::Problem {
             objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: zfrac(0, 1),
+                constraint: mvalue_from(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
@@ -86,7 +86,7 @@ mod pivot_row_idx {
         let problem = sut::Problem {
             objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: zfrac(0, 1),
+                constraint: mvalue_from(0, 1),
             },
             rows: vec![
                 sut::SimplexRow {
@@ -125,7 +125,7 @@ mod pivot_row_idx {
         let problem = sut::Problem {
             objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: zfrac(0, 1),
+                constraint: mvalue_from(0, 1),
             },
             rows: vec![
                 sut::SimplexRow {
@@ -164,7 +164,7 @@ mod pivot_row_idx {
         let problem = sut::Problem {
             objective_equation: sut::ObjectiveEquation {
                 coefficients: vec![],
-                constraint: zfrac(0, 1),
+                constraint: mvalue_from(0, 1),
             },
             rows: vec![
                 sut::SimplexRow {

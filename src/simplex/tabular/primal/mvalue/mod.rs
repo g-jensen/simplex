@@ -8,26 +8,26 @@ use fraction::{Signed, Zero};
 use crate::simplex::{Value, value};
 
 #[derive(Clone,Debug,PartialEq,Eq)]
-pub struct ZValue {
+pub struct MValue {
     finite: Value,
     m: Value
 }
 
-impl ZValue {
-    pub fn from(finite: Value) -> ZValue {
-        ZValue { finite: finite, m: value::zero() }
+impl MValue {
+    pub fn from(finite: Value) -> MValue {
+        MValue { finite: finite, m: value::zero() }
     }
 
-    pub fn from_m(finite: Value, m: Value) -> ZValue {
-        ZValue { finite: finite, m: m }
+    pub fn from_m(finite: Value, m: Value) -> MValue {
+        MValue { finite: finite, m: m }
     }
 
-    pub fn zero() -> ZValue {
-        ZValue::from(value::zero())
+    pub fn zero() -> MValue {
+        MValue::from(value::zero())
     }
 }
 
-impl PartialOrd for ZValue {
+impl PartialOrd for MValue {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         match self.m.partial_cmp(&other.m) {
             Some(core::cmp::Ordering::Equal) => {}
@@ -37,7 +37,7 @@ impl PartialOrd for ZValue {
     }
 }
 
-impl Ord for ZValue {
+impl Ord for MValue {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         match self.m.cmp(&other.m) {
             core::cmp::Ordering::Equal => {}
@@ -47,51 +47,51 @@ impl Ord for ZValue {
     }
 }
 
-impl Add for ZValue {
-    type Output = ZValue;
+impl Add for MValue {
+    type Output = MValue;
 
-    fn add(self, rhs: ZValue) -> Self::Output {
-        ZValue{
+    fn add(self, rhs: MValue) -> Self::Output {
+        MValue{
             finite: self.finite + rhs.finite,
             m : self.m + rhs.m
         }
     }
 }
 
-impl Neg for ZValue {
-    type Output = ZValue;
+impl Neg for MValue {
+    type Output = MValue;
 
     fn neg(self) -> Self::Output {
-        ZValue{
+        MValue{
             finite: self.finite.neg(),
             m: self.m.neg()
         }
     }
 }
 
-impl Mul<Value> for ZValue {
-    type Output = ZValue;
+impl Mul<Value> for MValue {
+    type Output = MValue;
 
     fn mul(self, rhs: Value) -> Self::Output {
-        ZValue{
+        MValue{
             finite: self.finite * rhs,
             m : self.m * rhs
         }
     }
 }
 
-impl Div<Value> for ZValue {
-    type Output = ZValue;
+impl Div<Value> for MValue {
+    type Output = MValue;
 
     fn div(self, rhs: Value) -> Self::Output {
-        ZValue{
+        MValue{
             finite: self.finite / rhs,
             m : self.m / rhs
         }
     }
 }
 
-impl Display for ZValue {
+impl Display for MValue {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.m.is_zero() {
             self.finite.fmt(f)

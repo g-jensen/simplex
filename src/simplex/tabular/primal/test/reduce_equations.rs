@@ -1,6 +1,6 @@
 mod reduce_equations {
     use crate::simplex::{
-        tabular::primal::{self as sut, mvalue::test::zfrac},
+        tabular::primal::{self as sut, mvalue::test::mvalue_from},
         test::frac,
     };
 
@@ -8,8 +8,8 @@ mod reduce_equations {
     fn reduces_objective_equation() {
         let mut problem = sut::Problem {
             objective_equation: sut::ObjectiveEquation {
-                coefficients: vec![zfrac(3, 1), zfrac(2, 1)],
-                constraint: zfrac(0, 1),
+                coefficients: vec![mvalue_from(3, 1), mvalue_from(2, 1)],
+                constraint: mvalue_from(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
@@ -23,18 +23,18 @@ mod reduce_equations {
         };
         sut::reduce_equations(&mut problem, 0, 0);
         assert_eq!(
-            vec![zfrac(0, 1), zfrac(1, 2)],
+            vec![mvalue_from(0, 1), mvalue_from(1, 2)],
             problem.objective_equation.coefficients
         );
-        assert_eq!(-zfrac(12, 1), problem.objective_equation.constraint);
+        assert_eq!(-mvalue_from(12, 1), problem.objective_equation.constraint);
     }
 
     #[test]
     fn leaves_pivot_row_unchanged() {
         let mut problem = sut::Problem {
             objective_equation: sut::ObjectiveEquation {
-                coefficients: vec![zfrac(1, 1), zfrac(1, 1)],
-                constraint: zfrac(0, 1),
+                coefficients: vec![mvalue_from(1, 1), mvalue_from(1, 1)],
+                constraint: mvalue_from(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
@@ -58,8 +58,8 @@ mod reduce_equations {
     fn reduces_non_pivot_row() {
         let mut problem = sut::Problem {
             objective_equation: sut::ObjectiveEquation {
-                coefficients: vec![zfrac(0, 1), zfrac(0, 1)],
-                constraint: zfrac(0, 1),
+                coefficients: vec![mvalue_from(0, 1), mvalue_from(0, 1)],
+                constraint: mvalue_from(0, 1),
             },
             rows: vec![
                 sut::SimplexRow {
@@ -93,8 +93,8 @@ mod reduce_equations {
     fn reduces_multiple_non_pivot_rows() {
         let mut problem = sut::Problem {
             objective_equation: sut::ObjectiveEquation {
-                coefficients: vec![zfrac(0, 1), zfrac(0, 1)],
-                constraint: zfrac(0, 1),
+                coefficients: vec![mvalue_from(0, 1), mvalue_from(0, 1)],
+                constraint: mvalue_from(0, 1),
             },
             rows: vec![
                 sut::SimplexRow {
@@ -146,8 +146,8 @@ mod reduce_equations {
     fn reduces_on_non_first_variable() {
         let mut problem = sut::Problem {
             objective_equation: sut::ObjectiveEquation {
-                coefficients: vec![zfrac(2, 1), zfrac(4, 1)],
-                constraint: zfrac(0, 1),
+                coefficients: vec![mvalue_from(2, 1), mvalue_from(4, 1)],
+                constraint: mvalue_from(0, 1),
             },
             rows: vec![sut::SimplexRow {
                 basic_variable: 0,
@@ -161,9 +161,9 @@ mod reduce_equations {
         };
         sut::reduce_equations(&mut problem, 0, 1);
         assert_eq!(
-            vec![-zfrac(10, 1), zfrac(0, 1)],
+            vec![-mvalue_from(10, 1), mvalue_from(0, 1)],
             problem.objective_equation.coefficients
         );
-        assert_eq!(-zfrac(24, 1), problem.objective_equation.constraint);
+        assert_eq!(-mvalue_from(24, 1), problem.objective_equation.constraint);
     }
 }
