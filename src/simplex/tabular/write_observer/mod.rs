@@ -1,7 +1,9 @@
 #[cfg(test)]
 mod test;
 
-use super::{Problem, ProblemObserver, SimplexRow, Variable};
+use crate::simplex::Variable;
+
+use super::primal::{Problem, ProblemObserver, SimplexRow};
 use std::{fmt::Display, io::Write};
 
 struct RowStrings {

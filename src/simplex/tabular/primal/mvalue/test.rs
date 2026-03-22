@@ -1,9 +1,17 @@
 use fraction::{ConstZero, Fraction};
 
-use crate::simplex::{Value, mvalue::{self as sut}};
+use crate::simplex::{Value, tabular::primal::mvalue::{self as sut}};
 
 fn frac(n: u64, d: u64) -> Fraction {
     Fraction::new(n,d)
+}
+
+pub fn zfrac(n: u64, d: u64) -> sut::ZValue {
+    sut::ZValue::from(frac(n,d))
+}
+
+pub fn zfrac_m(finite: Value, m: Value) -> sut::ZValue {
+    sut::ZValue::from_m(finite,m)
 }
 
 #[test]

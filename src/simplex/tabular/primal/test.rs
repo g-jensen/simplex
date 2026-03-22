@@ -12,11 +12,11 @@ mod normalize_equation;
 
 mod reduce_equations;
 
-use crate::simplex::test::{zfrac_m};
+use crate::simplex::tabular::primal::mvalue::test::zfrac_m;
 use crate::simplex::{Coefficients, Constraint, Operator, value};
 use crate::simplex::value::Value;
-use crate::simplex::mvalue::{ZValue};
-use crate::simplex::tabular::{self as sut, EmptyObserver};
+use crate::simplex::tabular::primal::mvalue::{ZValue};
+use crate::simplex::tabular::primal::{self as sut, EmptyObserver};
 use crate::simplex::{
     test::frac,
 };

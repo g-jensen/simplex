@@ -1,6 +1,7 @@
+use crate::simplex::tabular::primal::mvalue::test::zfrac;
 use crate::simplex::tabular::write_observer::{self as sut};
-use crate::simplex::tabular::{Equation, ObjectiveEquation, Problem, ProblemObserver, SimplexRow};
-use crate::simplex::test::{frac, zfrac};
+use crate::simplex::tabular::primal::{Equation, ObjectiveEquation, Problem, ProblemObserver, SimplexRow};
+use crate::simplex::test::{frac};
 
 fn make_one_variable_problem() -> Problem {
     Problem {

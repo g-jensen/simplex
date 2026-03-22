@@ -1,16 +1,14 @@
 mod initial_point {
     use crate::simplex::{
-        tabular::{self as sut},
-        tabular::test::{upper_bound_constraint},
-        test::{frac},
+        Constraint, tabular::primal::{self as sut, test::upper_bound_constraint}, test::frac, value::Value
     };
 
     #[test]
     fn finds_initial_point_with_no_constraints() {
-        let coeffs = Vec::<sut::Value>::new();
-        let ub_constraints = Vec::<sut::Constraint>::new();
+        let coeffs = Vec::<Value>::new();
+        let ub_constraints = Vec::<Constraint>::new();
         let point = sut::initial_point(&coeffs, &ub_constraints);
-        let expected_point = Vec::<sut::Value>::new();
+        let expected_point = Vec::<Value>::new();
         assert_eq!(expected_point, point);
     }
 

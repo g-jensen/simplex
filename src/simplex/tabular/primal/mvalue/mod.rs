@@ -1,5 +1,5 @@
 #[cfg(test)]
-mod test;
+pub mod test;
 
 use std::{fmt::Display, ops::{Add, Div, Mul, Neg}};
 

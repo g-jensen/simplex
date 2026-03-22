@@ -1,7 +1,7 @@
 mod normalize_equation {
     use crate::simplex::{
-        tabular::{self as sut},
-        test::{frac, zfrac},
+        tabular::primal::{self as sut, mvalue::test::zfrac},
+        test::frac,
     };
 
     #[test]

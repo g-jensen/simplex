@@ -6,10 +6,10 @@ use fraction::Fraction;
 
 use crate::simplex::Constraint;
 use crate::simplex::Operator;
+use crate::simplex::tabular::primal::Problem;
+use crate::simplex::tabular::primal::solve;
 use crate::simplex::value::Value;
 use crate::simplex::tabular::write_observer::WriteObserver;
-use crate::simplex::tabular::Problem;
-use crate::simplex::tabular::solve;
 
 fn main() {
     let mut writer = stdout();

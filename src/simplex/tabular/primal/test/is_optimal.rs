@@ -1,13 +1,12 @@
 mod is_optimal {
     use crate::simplex::{
-        tabular::{self as sut},
-        test::{zfrac},
+        tabular::primal::{self as sut, {ObjectiveEquation, Problem}, mvalue::test::zfrac},
     };
 
     #[test]
     fn empty_objective_is_optimal() {
-        let problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let problem = Problem {
+            objective_equation: ObjectiveEquation {
                 coefficients: vec![],
                 constraint: zfrac(0, 1),
             },
