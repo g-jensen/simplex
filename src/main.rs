@@ -4,8 +4,8 @@ use std::io::stdout;
 
 use fraction::Fraction;
 
-use crate::simplex::tabular::Constraint;
-use crate::simplex::tabular::Operator;
+use crate::simplex::Constraint;
+use crate::simplex::Operator;
 use crate::simplex::value::Value;
 use crate::simplex::tabular::write_observer::WriteObserver;
 use crate::simplex::tabular::Problem;

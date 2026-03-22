@@ -5,24 +5,8 @@ mod test;
 
 use fraction::{Fraction};
 
-use crate::simplex::value::{Value, ZValue};
-use crate::simplex::value;
-
-pub type Coefficients = Vec<Value>;
-pub type Variable = usize;
-
-#[derive(Clone)]
-pub enum Operator {
-    LESSTHANEQUAL,
-    EQUAL
-}
-
-#[derive(Clone)]
-pub struct Constraint {
-    pub operator: Operator,
-    pub coefficients: Coefficients,
-    pub bound: Value
-}
+use crate::simplex::{value::Value, mvalue::ZValue};
+use crate::simplex::{Coefficients, Constraint, Operator, Variable, value};
 
 pub type ObjectiveCoefficients = Vec<ZValue>;
 

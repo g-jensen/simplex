@@ -1,6 +1,6 @@
 use fraction::{ConstZero, Fraction};
 
-use crate::simplex::value::{self as sut};
+use crate::simplex::{Value, mvalue::{self as sut}};
 
 fn frac(n: u64, d: u64) -> Fraction {
     Fraction::new(n,d)
@@ -129,12 +129,12 @@ fn zvalue_formats_finite_and_m() {
 #[test]
 fn zvalue_mul_finite() {
     let f1 = sut::ZValue::from(frac(1,2));
-    let f2 = sut::Value::from(frac(2,3));
+    let f2 = Value::from(frac(2,3));
     let prod = sut::ZValue::from(frac(1,3));
     assert_eq!(prod, f1*f2);
 
     let f1 = sut::ZValue::from(frac(5,2));
-    let f2 = sut::Value::from(frac(3,2));
+    let f2 = Value::from(frac(3,2));
     let prod = sut::ZValue::from(frac(15,4));
     assert_eq!(prod, f1*f2);
 }
@@ -145,7 +145,7 @@ fn zvalue_mul_finite_and_m() {
     let b = frac(3,4);
     let c = frac(5,6);
     let f1 = sut::ZValue::from_m(a,b);
-    let f2 = sut::Value::from(c);
+    let f2 = Value::from(c);
     let prod = sut::ZValue::from_m(a*c,b*c);
     assert_eq!(prod, f1*f2);
 }
@@ -153,12 +153,12 @@ fn zvalue_mul_finite_and_m() {
 #[test]
 fn zvalue_div_finite() {
     let f1 = sut::ZValue::from(frac(1,2));
-    let f2 = sut::Value::from(frac(2,3));
+    let f2 = Value::from(frac(2,3));
     let prod = sut::ZValue::from(frac(3,4));
     assert_eq!(prod, f1/f2);
 
     let f1 = sut::ZValue::from(frac(5,2));
-    let f2 = sut::Value::from(frac(3,2));
+    let f2 = Value::from(frac(3,2));
     let prod = sut::ZValue::from(frac(5,3));
     assert_eq!(prod, f1/f2);
 }
@@ -166,7 +166,7 @@ fn zvalue_div_finite() {
 #[test]
 fn zvalue_div_finite_and_m() {
     let f1 = sut::ZValue::from_m(frac(1,2), frac(3,4));
-    let f2 = sut::Value::from(frac(5,6));
+    let f2 = Value::from(frac(5,6));
     let prod = sut::ZValue::from_m(frac(6,10),frac(18,20));
     assert_eq!(prod, f1/f2);
 }

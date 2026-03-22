@@ -13,7 +13,9 @@ mod normalize_equation;
 mod reduce_equations;
 
 use crate::simplex::test::{zfrac_m};
-use crate::simplex::value::{self, Value, ZValue};
+use crate::simplex::{Coefficients, Constraint, Operator, value};
+use crate::simplex::value::Value;
+use crate::simplex::mvalue::{ZValue};
 use crate::simplex::tabular::{self as sut, EmptyObserver};
 use crate::simplex::{
     test::frac,
@@ -38,20 +40,20 @@ impl sut::ProblemObserver for MockObserver {
 }
 
 pub fn upper_bound_constraint(
-    coefficients: sut::Coefficients,
-    bound: Value) -> sut::Constraint {
-    sut::Constraint {
-        operator: sut::Operator::LESSTHANEQUAL,
+    coefficients: Coefficients,
+    bound: Value) -> Constraint {
+    Constraint {
+        operator: Operator::LESSTHANEQUAL,
         coefficients,
         bound,
     }
 }
 
 pub fn equality_constraint(
-    coefficients: sut::Coefficients,
-    bound: Value) -> sut::Constraint {
-    sut::Constraint {
-        operator: sut::Operator::EQUAL,
+    coefficients: Coefficients,
+    bound: Value) -> Constraint {
+    Constraint {
+        operator: Operator::EQUAL,
         coefficients,
         bound,
     }

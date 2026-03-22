@@ -1,6 +1,6 @@
 use fraction::{Fraction};
 
-use crate::simplex::value::{Value, ZValue};
+use crate::simplex::{value::Value, mvalue::ZValue};
 
 pub fn frac(n: u64, d: u64) -> Value {
     Fraction::new(n,d)
