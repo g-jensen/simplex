@@ -12,17 +12,19 @@ mod normalize_equation;
 
 mod reduce_equations;
 
+use crate::simplex::objectivevalue::ObjectiveEquation;
 use crate::simplex::tabular::primal::mobjectivevalue::test::mvalue_from_m;
-use crate::simplex::{Coefficients, Constraint, Operator, value};
-use crate::simplex::value::Value;
-use crate::simplex::tabular::primal::mobjectivevalue::{MObjectiveValue};
+use crate::simplex::tabular::primal::mobjectivevalue::MObjectiveValue;
 use crate::simplex::tabular::primal::{self as sut, EmptyObserver};
-use crate::simplex::{
-    test::frac,
-};
+use crate::simplex::test::frac;
+use crate::simplex::value::Value;
+use crate::simplex::{value, Coefficients, Constraint, Operator};
+
+pub type MProblem = sut::Problem<MObjectiveValue>;
+pub type MObjectiveEquation = ObjectiveEquation<MObjectiveValue>;
 
 struct MockObserver {
-    observations: Vec<sut::Problem>,
+    observations: Vec<MProblem>,
 }
 
 impl MockObserver {
@@ -33,15 +35,13 @@ impl MockObserver {
     }
 }
 
-impl sut::ProblemObserver for MockObserver {
-    fn observe(&mut self, problem: sut::Problem) {
+impl sut::ProblemObserver<MObjectiveValue> for MockObserver {
+    fn observe(&mut self, problem: MProblem) {
         self.observations.push(problem);
     }
 }
 
-pub fn upper_bound_constraint(
-    coefficients: Coefficients,
-    bound: Value) -> Constraint {
+pub fn upper_bound_constraint(coefficients: Coefficients, bound: Value) -> Constraint {
     Constraint {
         operator: Operator::LESSTHANEQUAL,
         coefficients,
@@ -49,9 +49,7 @@ pub fn upper_bound_constraint(
     }
 }
 
-pub fn equality_constraint(
-    coefficients: Coefficients,
-    bound: Value) -> Constraint {
+pub fn equality_constraint(coefficients: Coefficients, bound: Value) -> Constraint {
     Constraint {
         operator: Operator::EQUAL,
         coefficients,
@@ -61,203 +59,186 @@ pub fn equality_constraint(
 
 #[test]
 fn solves_one_variable_zero_constraint_problem() {
-    let objective_function = vec![frac(1,1)];
+    let objective_function = vec![frac(1, 1)];
     let fn_constraints = vec![];
-    let problem = sut::Problem::new(&objective_function,&fn_constraints);
-    let solns = sut::solve(problem,&mut EmptyObserver::new());
-    let expected_solns = vec![frac(0,1)];
+    let problem = MProblem::new(&objective_function, &fn_constraints);
+    let solns = sut::solve(problem, &mut EmptyObserver::new());
+    let expected_solns = vec![frac(0, 1)];
     assert_eq!(expected_solns, solns);
 }
 
 #[test]
 fn solves_two_variable_zero_constraint_problem() {
-    let objective_function = vec![frac(1,1), frac(2,1)];
+    let objective_function = vec![frac(1, 1), frac(2, 1)];
     let fn_constraints = vec![];
-    let problem = sut::Problem::new(&objective_function,&fn_constraints);
-    let solns = sut::solve(problem,&mut EmptyObserver::new());
-    let expected_solns = vec![frac(0,1), frac(0,1)];
+    let problem = MProblem::new(&objective_function, &fn_constraints);
+    let solns = sut::solve(problem, &mut EmptyObserver::new());
+    let expected_solns = vec![frac(0, 1), frac(0, 1)];
     assert_eq!(expected_solns, solns);
 }
 
 #[test]
 fn solves_one_variable_one_constraint_problem() {
-    let objective_function = vec![frac(1,1)];
-    let functional_constraint = upper_bound_constraint(vec![frac(1,1)], frac(1,1));
+    let objective_function = vec![frac(1, 1)];
+    let functional_constraint = upper_bound_constraint(vec![frac(1, 1)], frac(1, 1));
     let fn_constraints = vec![functional_constraint];
-    let problem = sut::Problem::new(&objective_function,&fn_constraints);
-    let solns = sut::solve(problem,&mut EmptyObserver::new());
-    let expected_solns = vec![frac(1,1), frac(0,1)];
+    let problem = MProblem::new(&objective_function, &fn_constraints);
+    let solns = sut::solve(problem, &mut EmptyObserver::new());
+    let expected_solns = vec![frac(1, 1), frac(0, 1)];
     assert_eq!(expected_solns, solns);
 }
 
 #[test]
 fn maximizes_unconstrainted_variable() {
-    let objective_function = vec![frac(1,1), frac(1,1)];
-    let functional_constraint = upper_bound_constraint(vec![frac(3,1), frac(0,1)], frac(6,1));
+    let objective_function = vec![frac(1, 1), frac(1, 1)];
+    let functional_constraint = upper_bound_constraint(vec![frac(3, 1), frac(0, 1)], frac(6, 1));
     let fn_constraints = vec![functional_constraint];
-    let problem = sut::Problem::new(&objective_function,&fn_constraints);
-    let solns = sut::solve(problem,&mut EmptyObserver::new());
-    let expected_solns = vec![frac(2,1), frac(0,1), frac(0,1)];
+    let problem = MProblem::new(&objective_function, &fn_constraints);
+    let solns = sut::solve(problem, &mut EmptyObserver::new());
+    let expected_solns = vec![frac(2, 1), frac(0, 1), frac(0, 1)];
     assert_eq!(expected_solns, solns);
 }
 
 #[test]
 fn maximizes_one_variable_problem() {
-    let objective_function = vec![frac(1,1)];
-    let functional_constraint = upper_bound_constraint(vec![frac(3,1)], frac(6,1));
+    let objective_function = vec![frac(1, 1)];
+    let functional_constraint = upper_bound_constraint(vec![frac(3, 1)], frac(6, 1));
     let fn_constraints = vec![functional_constraint];
-    let problem = sut::Problem::new(&objective_function,&fn_constraints);
-    let solns = sut::solve(problem,&mut EmptyObserver::new());
-    let expected_solns = vec![frac(2,1), frac(0,1)];
+    let problem = MProblem::new(&objective_function, &fn_constraints);
+    let solns = sut::solve(problem, &mut EmptyObserver::new());
+    let expected_solns = vec![frac(2, 1), frac(0, 1)];
     assert_eq!(expected_solns, solns);
 }
 
 #[test]
 fn maximizes_one_variable_two_constraint_problem() {
-    let objective_function = vec![frac(1,1)];
-    let fn_constaint_0 = upper_bound_constraint(vec![frac(2,1)], frac(6,1));
-    let fn_constaint_1 = upper_bound_constraint(vec![frac(3,1)], frac(6,1));
+    let objective_function = vec![frac(1, 1)];
+    let fn_constaint_0 = upper_bound_constraint(vec![frac(2, 1)], frac(6, 1));
+    let fn_constaint_1 = upper_bound_constraint(vec![frac(3, 1)], frac(6, 1));
     let fn_constraints = vec![fn_constaint_0, fn_constaint_1];
-    let problem = sut::Problem::new(&objective_function,&fn_constraints);
-    let solns = sut::solve(problem,&mut EmptyObserver::new());
-    let expected_solns = vec![frac(2,1), frac(2,1), frac(0,1)];
+    let problem = MProblem::new(&objective_function, &fn_constraints);
+    let solns = sut::solve(problem, &mut EmptyObserver::new());
+    let expected_solns = vec![frac(2, 1), frac(2, 1), frac(0, 1)];
     assert_eq!(expected_solns, solns);
 }
 
 #[test]
 fn maximizes_two_independent_variable_two_constraint_problem() {
-    let objective_function = vec![frac(1,1), frac(1,1)];
-    let fn_constaint_0 = upper_bound_constraint(vec![frac(2,1), frac(0,1)], frac(6,1));
-    let fn_constaint_1 = upper_bound_constraint(vec![frac(0,1), frac(4,1)], frac(8,1));
+    let objective_function = vec![frac(1, 1), frac(1, 1)];
+    let fn_constaint_0 = upper_bound_constraint(vec![frac(2, 1), frac(0, 1)], frac(6, 1));
+    let fn_constaint_1 = upper_bound_constraint(vec![frac(0, 1), frac(4, 1)], frac(8, 1));
     let fn_constraints = vec![fn_constaint_0, fn_constaint_1];
-    let problem = sut::Problem::new(&objective_function,&fn_constraints);
-    let solns = sut::solve(problem,&mut EmptyObserver::new());
-    let expected_solns = vec![frac(3,1), frac(2,1), frac(0,1), frac(0,1)];
+    let problem = MProblem::new(&objective_function, &fn_constraints);
+    let solns = sut::solve(problem, &mut EmptyObserver::new());
+    let expected_solns = vec![frac(3, 1), frac(2, 1), frac(0, 1), frac(0, 1)];
     assert_eq!(expected_solns, solns);
 }
 
 #[test]
 fn maximizes_two_dependent_variable_one_constraint_symmetric_problem() {
-    let objective_function = vec![frac(1,1), frac(1,1)];
-    let fn_constaint_0 = upper_bound_constraint(vec![frac(2,1), frac(4,1)], frac(6,1));
+    let objective_function = vec![frac(1, 1), frac(1, 1)];
+    let fn_constaint_0 = upper_bound_constraint(vec![frac(2, 1), frac(4, 1)], frac(6, 1));
     let fn_constraints = vec![fn_constaint_0];
-    let problem = sut::Problem::new(&objective_function,&fn_constraints);
-    let solns = sut::solve(problem,&mut EmptyObserver::new());
-    let expected_solns = vec![frac(3,1), frac(0,1), frac(0,1)];
+    let problem = MProblem::new(&objective_function, &fn_constraints);
+    let solns = sut::solve(problem, &mut EmptyObserver::new());
+    let expected_solns = vec![frac(3, 1), frac(0, 1), frac(0, 1)];
     assert_eq!(expected_solns, solns);
 }
 
 #[test]
 fn maximizes_two_dependent_variable_two_constraint_symmetric_problem() {
-    let objective_function = vec![frac(1,1), frac(1,1)];
-    let fn_constaint_0 = upper_bound_constraint(vec![frac(1,1), frac(2,1)], frac(3,1));
-    let fn_constaint_1 = upper_bound_constraint(vec![frac(2,1), frac(1,1)], frac(3,1));
+    let objective_function = vec![frac(1, 1), frac(1, 1)];
+    let fn_constaint_0 = upper_bound_constraint(vec![frac(1, 1), frac(2, 1)], frac(3, 1));
+    let fn_constaint_1 = upper_bound_constraint(vec![frac(2, 1), frac(1, 1)], frac(3, 1));
     let fn_constraints = vec![fn_constaint_0, fn_constaint_1];
-    let problem = sut::Problem::new(&objective_function,&fn_constraints);
-    let solns = sut::solve(problem,&mut EmptyObserver::new());
-    let expected_solns = vec![frac(1,1), frac(1,1), frac(0,1), frac(0,1)];
+    let problem = MProblem::new(&objective_function, &fn_constraints);
+    let solns = sut::solve(problem, &mut EmptyObserver::new());
+    let expected_solns = vec![frac(1, 1), frac(1, 1), frac(0, 1), frac(0, 1)];
     assert_eq!(expected_solns, solns);
 }
 
 #[test]
 fn solves_big_m_problem() {
-    let problem = sut::Problem{
-        objective_equation: sut::ObjectiveEquation{
+    let problem = MProblem {
+        objective_equation: MObjectiveEquation {
             coefficients: vec![
-                mvalue_from_m(-frac(2,1), -frac(2,1)),
-                mvalue_from_m(-frac(3,1), -frac(1,1)),
+                mvalue_from_m(-frac(2, 1), -frac(2, 1)),
+                mvalue_from_m(-frac(3, 1), -frac(1, 1)),
                 MObjectiveValue::zero(),
-                MObjectiveValue::zero()
+                MObjectiveValue::zero(),
             ],
-            constraint: mvalue_from_m(value::zero(),-frac(3,1))
+            constraint: mvalue_from_m(value::zero(), -frac(3, 1)),
         },
         rows: vec![
-            sut::SimplexRow{
+            sut::SimplexRow {
                 basic_variable: 2,
-                equation: sut::Equation{
-                    coefficients: vec![
-                        frac(1,1),
-                        frac(2,1),
-                        frac(1,1),
-                        value::zero()
-                    ],
-                    constraint: frac(4,1)
+                equation: sut::Equation {
+                    coefficients: vec![frac(1, 1), frac(2, 1), frac(1, 1), value::zero()],
+                    constraint: frac(4, 1),
                 },
-                ratio: value::zero()
+                ratio: value::zero(),
             },
-            sut::SimplexRow{
+            sut::SimplexRow {
                 basic_variable: 3,
-                equation: sut::Equation{
-                    coefficients: vec![
-                        frac(1,1),
-                        frac(1,1),
-                        value::zero(),
-                        frac(1,1)
-                    ],
-                    constraint: frac(3,1)
+                equation: sut::Equation {
+                    coefficients: vec![frac(1, 1), frac(1, 1), value::zero(), frac(1, 1)],
+                    constraint: frac(3, 1),
                 },
-                ratio: value::zero()
-            }
+                ratio: value::zero(),
+            },
         ],
-        point: vec![value::zero(),value::zero(),frac(4,1),frac(3,1)]
+        point: vec![value::zero(), value::zero(), frac(4, 1), frac(3, 1)],
     };
-    let solns = sut::solve(problem,&mut EmptyObserver::new());
-    let expected_solns = vec![frac(3,1), value::zero(), frac(1,1), value::zero()];
+    let solns = sut::solve(problem, &mut EmptyObserver::new());
+    let expected_solns = vec![frac(3, 1), value::zero(), frac(1, 1), value::zero()];
     assert_eq!(expected_solns, solns);
 }
 
 #[test]
 fn creates_big_m_problem() {
-    let objective_function = vec![frac(2,1), frac(3,1)];
-    let fn_constaint_0 = upper_bound_constraint(vec![frac(1,1), frac(2,1)], frac(4,1));
-    let fn_constaint_1 = equality_constraint(vec![frac(1,1), frac(2,1)], frac(3,1));
+    let objective_function = vec![frac(2, 1), frac(3, 1)];
+    let fn_constaint_0 = upper_bound_constraint(vec![frac(1, 1), frac(2, 1)], frac(4, 1));
+    let fn_constaint_1 = equality_constraint(vec![frac(1, 1), frac(2, 1)], frac(3, 1));
     let fn_constraints = vec![fn_constaint_0, fn_constaint_1];
 
-    let problem = sut::Problem::new(&objective_function,&fn_constraints);
-    let expected_problem = sut::Problem{
-        objective_equation: sut::ObjectiveEquation{
+    let problem = MProblem::new(&objective_function, &fn_constraints);
+    let expected_problem = MProblem {
+        objective_equation: MObjectiveEquation {
             coefficients: vec![
-                mvalue_from_m(-frac(2,1), -frac(1,1)),
-                mvalue_from_m(-frac(3,1), -frac(2,1)),
+                mvalue_from_m(-frac(2, 1), -frac(1, 1)),
+                mvalue_from_m(-frac(3, 1), -frac(2, 1)),
                 MObjectiveValue::zero(),
-                MObjectiveValue::zero()
+                MObjectiveValue::zero(),
             ],
-            constraint: mvalue_from_m(value::zero(),-frac(3,1))
+            constraint: mvalue_from_m(value::zero(), -frac(3, 1)),
         },
         rows: vec![
-            sut::SimplexRow{
+            sut::SimplexRow {
                 basic_variable: 2,
-                equation: sut::Equation{
-                    coefficients: vec![
-                        frac(1,1),
-                        frac(2,1),
-                        frac(1,1),
-                        value::zero()
-                    ],
-                    constraint: frac(4,1)
+                equation: sut::Equation {
+                    coefficients: vec![frac(1, 1), frac(2, 1), frac(1, 1), value::zero()],
+                    constraint: frac(4, 1),
                 },
-                ratio: value::zero()
+                ratio: value::zero(),
             },
-            sut::SimplexRow{
+            sut::SimplexRow {
                 basic_variable: 3,
-                equation: sut::Equation{
-                    coefficients: vec![
-                        frac(1,1),
-                        frac(2,1),
-                        value::zero(),
-                        frac(1,1)
-                    ],
-                    constraint: frac(3,1)
+                equation: sut::Equation {
+                    coefficients: vec![frac(1, 1), frac(2, 1), value::zero(), frac(1, 1)],
+                    constraint: frac(3, 1),
                 },
-                ratio: value::zero()
-            }
+                ratio: value::zero(),
+            },
         ],
-        point: vec![value::zero(),value::zero(),frac(4,1),frac(3,1)]
+        point: vec![value::zero(), value::zero(), frac(4, 1), frac(3, 1)],
     };
-    assert_eq!(expected_problem.objective_equation,problem.objective_equation);
-    assert_eq!(expected_problem.point,problem.point);
-    assert_eq!(expected_problem.rows,problem.rows);
-    assert_eq!(expected_problem,problem);
+    assert_eq!(
+        expected_problem.objective_equation,
+        problem.objective_equation
+    );
+    assert_eq!(expected_problem.point, problem.point);
+    assert_eq!(expected_problem.rows, problem.rows);
+    assert_eq!(expected_problem, problem);
 }
 
 #[test]
@@ -265,7 +246,7 @@ fn solve_observes_empty_problem() {
     let mut observer = MockObserver::new();
     let coeffs = vec![];
     let constraints = vec![];
-    let problem = sut::Problem::new(&coeffs, &constraints);
+    let problem = MProblem::new(&coeffs, &constraints);
     let expected_observations = vec![problem.clone()];
     let _solution = sut::solve(problem, &mut observer);
     assert_eq!(expected_observations, observer.observations);
@@ -275,14 +256,11 @@ fn solve_observes_empty_problem() {
 fn solve_observes_steps_of_problem() {
     let mut observer = MockObserver::new();
     let objective_coeffs = vec![frac(1, 1)];
-    let functional_constraint = upper_bound_constraint(
-        vec![frac(3, 1)], 
-        frac(6, 1)
-    );
+    let functional_constraint = upper_bound_constraint(vec![frac(3, 1)], frac(6, 1));
     let constraints = vec![functional_constraint];
-    let problem = sut::Problem::new(&objective_coeffs, &constraints);
+    let problem = MProblem::new(&objective_coeffs, &constraints);
     let mut middle_problem = problem.clone();
-    sut::set_ratios(&mut middle_problem,0);
+    sut::set_ratios(&mut middle_problem, 0);
     let mut solved_problem = middle_problem.clone();
     sut::set_basic_variable(&mut solved_problem, 0, 0);
     sut::normalize_equation(&mut solved_problem, 0, 0);

@@ -1,13 +1,17 @@
 mod pivot_row_idx {
     use crate::simplex::{
-        tabular::primal::{self as sut, mobjectivevalue::test::mvalue_from},
+        tabular::primal::{
+            self as sut,
+            mobjectivevalue::test::mvalue_from,
+            test::{MObjectiveEquation, MProblem},
+        },
         test::frac,
     };
 
     #[test]
     fn returns_none_for_no_rows() {
-        let problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
@@ -20,8 +24,8 @@ mod pivot_row_idx {
 
     #[test]
     fn returns_index_for_single_positive_ratio() {
-        let problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
@@ -41,8 +45,8 @@ mod pivot_row_idx {
 
     #[test]
     fn returns_none_for_zero_ratio() {
-        let problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
@@ -62,8 +66,8 @@ mod pivot_row_idx {
 
     #[test]
     fn returns_none_for_negative_ratio() {
-        let problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
@@ -83,8 +87,8 @@ mod pivot_row_idx {
 
     #[test]
     fn returns_index_of_minimum_positive_ratio() {
-        let problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
@@ -122,8 +126,8 @@ mod pivot_row_idx {
 
     #[test]
     fn ignores_non_positive_ratios() {
-        let problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
@@ -161,8 +165,8 @@ mod pivot_row_idx {
 
     #[test]
     fn returns_none_when_all_ratios_non_positive() {
-        let problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },

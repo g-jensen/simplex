@@ -4,12 +4,13 @@ use std::io::stdout;
 
 use fraction::Fraction;
 
+use crate::simplex::tabular::primal::mobjectivevalue::MObjectiveValue;
+use crate::simplex::tabular::primal::solve;
+use crate::simplex::tabular::primal::Problem;
+use crate::simplex::tabular::write_observer::WriteObserver;
+use crate::simplex::value::Value;
 use crate::simplex::Constraint;
 use crate::simplex::Operator;
-use crate::simplex::tabular::primal::Problem;
-use crate::simplex::tabular::primal::solve;
-use crate::simplex::value::Value;
-use crate::simplex::tabular::write_observer::WriteObserver;
 
 fn main() {
     let mut writer = stdout();
@@ -18,15 +19,21 @@ fn main() {
     let functional_constraints = vec![
         Constraint {
             operator: Operator::LESSTHANEQUAL,
-            coefficients: vec![Value::from(Fraction::from(1)),Value::from(Fraction::from(1))],
-            bound: Value::from(Fraction::from(4))
+            coefficients: vec![
+                Value::from(Fraction::from(1)),
+                Value::from(Fraction::from(1)),
+            ],
+            bound: Value::from(Fraction::from(4)),
         },
         Constraint {
             operator: Operator::LESSTHANEQUAL,
-            coefficients: vec![Value::from(Fraction::from(1)),Value::from(Fraction::from(3))],
-            bound: Value::from(Fraction::from(8))
+            coefficients: vec![
+                Value::from(Fraction::from(1)),
+                Value::from(Fraction::from(3)),
+            ],
+            bound: Value::from(Fraction::from(8)),
         },
     ];
-    let problem = Problem::new(&objective_fn_coeffs, &functional_constraints);
-    solve(problem,&mut observer);
+    let problem = Problem::<MObjectiveValue>::new(&objective_fn_coeffs, &functional_constraints);
+    solve(problem, &mut observer);
 }

@@ -1,10 +1,14 @@
 mod pivot_variable {
-    use crate::simplex::tabular::primal::{self as sut, mobjectivevalue::test::mvalue_from};
+    use crate::simplex::tabular::primal::{
+        self as sut,
+        mobjectivevalue::test::mvalue_from,
+        test::{MObjectiveEquation, MProblem},
+    };
 
     #[test]
     fn empty_objective_has_no_pivot() {
-        let problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
@@ -16,8 +20,8 @@ mod pivot_variable {
 
     #[test]
     fn single_var_is_pivot() {
-        let problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![mvalue_from(1, 1)],
                 constraint: mvalue_from(0, 1),
             },
@@ -29,8 +33,8 @@ mod pivot_variable {
 
     #[test]
     fn smallest_var_is_pivot() {
-        let problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![mvalue_from(1, 1), -mvalue_from(2, 1), mvalue_from(0, 1)],
                 constraint: mvalue_from(0, 1),
             },

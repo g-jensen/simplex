@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod test;
 
+use crate::simplex::objectivevalue::ObjectiveValue;
 use crate::simplex::Variable;
 
 use super::primal::{Problem, ProblemObserver, SimplexRow};
@@ -114,7 +115,7 @@ fn stringify_coefficients<T: Display>(coefficients: &Vec<T>) -> Vec<String> {
     coefficients.iter().map(|c| c.to_string()).collect()
 }
 
-fn stringify_objective(problem: &Problem) -> RowStrings {
+fn stringify_objective<O: ObjectiveValue>(problem: &Problem<O>) -> RowStrings {
     RowStrings {
         bv: "Z".to_string(),
         coefficients: stringify_coefficients(&problem.objective_equation.coefficients),
@@ -142,8 +143,8 @@ impl<'a, W: Write> WriteObserver<'a, W> {
     }
 }
 
-impl<W: Write> ProblemObserver for WriteObserver<'_, W> {
-    fn observe(&mut self, problem: Problem) {
+impl<O: ObjectiveValue, W: Write> ProblemObserver<O> for WriteObserver<'_, W> {
+    fn observe(&mut self, problem: Problem<O>) {
         let objective_row = stringify_objective(&problem);
         let constraint_rows: Vec<RowStrings> =
             problem.rows.iter().map(stringify_constraint).collect();

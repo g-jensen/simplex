@@ -1,13 +1,17 @@
 mod reduce_equations {
     use crate::simplex::{
-        tabular::primal::{self as sut, mobjectivevalue::test::mvalue_from},
+        tabular::primal::{
+            self as sut,
+            mobjectivevalue::test::mvalue_from,
+            test::{MObjectiveEquation, MProblem},
+        },
         test::frac,
     };
 
     #[test]
     fn reduces_objective_equation() {
-        let mut problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let mut problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![mvalue_from(3, 1), mvalue_from(2, 1)],
                 constraint: mvalue_from(0, 1),
             },
@@ -31,8 +35,8 @@ mod reduce_equations {
 
     #[test]
     fn leaves_pivot_row_unchanged() {
-        let mut problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let mut problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![mvalue_from(1, 1), mvalue_from(1, 1)],
                 constraint: mvalue_from(0, 1),
             },
@@ -56,8 +60,8 @@ mod reduce_equations {
 
     #[test]
     fn reduces_non_pivot_row() {
-        let mut problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let mut problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![mvalue_from(0, 1), mvalue_from(0, 1)],
                 constraint: mvalue_from(0, 1),
             },
@@ -91,8 +95,8 @@ mod reduce_equations {
 
     #[test]
     fn reduces_multiple_non_pivot_rows() {
-        let mut problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let mut problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![mvalue_from(0, 1), mvalue_from(0, 1)],
                 constraint: mvalue_from(0, 1),
             },
@@ -144,8 +148,8 @@ mod reduce_equations {
 
     #[test]
     fn reduces_on_non_first_variable() {
-        let mut problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let mut problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![mvalue_from(2, 1), mvalue_from(4, 1)],
                 constraint: mvalue_from(0, 1),
             },

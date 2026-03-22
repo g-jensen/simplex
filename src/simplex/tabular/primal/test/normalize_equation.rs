@@ -1,13 +1,17 @@
 mod normalize_equation {
     use crate::simplex::{
-        tabular::primal::{self as sut, mobjectivevalue::test::mvalue_from},
+        tabular::primal::{
+            self as sut,
+            mobjectivevalue::test::mvalue_from,
+            test::{MObjectiveEquation, MProblem},
+        },
         test::frac,
     };
 
     #[test]
     fn sets_single_coefficient_to_one() {
-        let mut problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let mut problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
@@ -27,8 +31,8 @@ mod normalize_equation {
 
     #[test]
     fn divides_other_coefficients_by_pivot() {
-        let mut problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let mut problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
@@ -51,8 +55,8 @@ mod normalize_equation {
 
     #[test]
     fn normalizes_on_non_first_variable() {
-        let mut problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let mut problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
@@ -75,8 +79,8 @@ mod normalize_equation {
 
     #[test]
     fn leaves_other_coefficients_unchanged_when_pivot_is_one() {
-        let mut problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let mut problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
@@ -99,8 +103,8 @@ mod normalize_equation {
 
     #[test]
     fn normalizes_correct_row_when_multiple_rows_exist() {
-        let mut problem = sut::Problem {
-            objective_equation: sut::ObjectiveEquation {
+        let mut problem = MProblem {
+            objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
             },
