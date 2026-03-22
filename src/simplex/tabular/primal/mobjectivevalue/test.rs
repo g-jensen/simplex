@@ -2,7 +2,7 @@ use fraction::{ConstZero, Fraction};
 
 use crate::simplex::{
     tabular::primal::mobjectivevalue::{self as sut},
-    Value,
+    value::Value,
 };
 
 // reconcile with other frac fn.

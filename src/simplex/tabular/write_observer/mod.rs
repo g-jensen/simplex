@@ -2,6 +2,7 @@
 mod test;
 
 use crate::simplex::objectivevalue::ObjectiveValue;
+use crate::simplex::rowvalue::RowValue;
 use crate::simplex::Variable;
 
 use super::{Problem, ProblemObserver, SimplexRow};
@@ -115,7 +116,7 @@ fn stringify_coefficients<T: Display>(coefficients: &Vec<T>) -> Vec<String> {
     coefficients.iter().map(|c| c.to_string()).collect()
 }
 
-fn stringify_objective<O: ObjectiveValue>(problem: &Problem<O>) -> RowStrings {
+fn stringify_objective<R: RowValue, O: ObjectiveValue<R>>(problem: &Problem<R, O>) -> RowStrings {
     RowStrings {
         bv: "Z".to_string(),
         coefficients: stringify_coefficients(&problem.objective_equation.coefficients),
@@ -124,7 +125,7 @@ fn stringify_objective<O: ObjectiveValue>(problem: &Problem<O>) -> RowStrings {
     }
 }
 
-fn stringify_constraint(simplex_row: &SimplexRow) -> RowStrings {
+fn stringify_constraint<R: RowValue>(simplex_row: &SimplexRow<R>) -> RowStrings {
     RowStrings {
         bv: variable_name(simplex_row.basic_variable),
         coefficients: stringify_coefficients(&simplex_row.equation.coefficients),
@@ -143,8 +144,8 @@ impl<'a, W: Write> WriteObserver<'a, W> {
     }
 }
 
-impl<O: ObjectiveValue, W: Write> ProblemObserver<O> for WriteObserver<'_, W> {
-    fn observe(&mut self, problem: Problem<O>) {
+impl<R: RowValue, O: ObjectiveValue<R>, W: Write> ProblemObserver<R, O> for WriteObserver<'_, W> {
+    fn observe(&mut self, problem: Problem<R, O>) {
         let objective_row = stringify_objective(&problem);
         let constraint_rows: Vec<RowStrings> =
             problem.rows.iter().map(stringify_constraint).collect();

@@ -34,6 +34,7 @@ fn main() {
             bound: Value::from(Fraction::from(8)),
         },
     ];
-    let problem = Problem::<MObjectiveValue>::new(&objective_fn_coeffs, &functional_constraints);
+    let problem =
+        Problem::<Value, MObjectiveValue>::new(&objective_fn_coeffs, &functional_constraints);
     solve(problem, &mut observer);
 }

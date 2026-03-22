@@ -8,7 +8,7 @@ use crate::simplex::{
 #[test]
 fn finds_initial_point_with_no_constraints() {
     let coeffs = Vec::<Value>::new();
-    let ub_constraints = Vec::<Constraint>::new();
+    let ub_constraints = Vec::<Constraint<Value>>::new();
     let point = tabular::initial_point(&coeffs, &ub_constraints);
     let expected_point = Vec::<Value>::new();
     assert_eq!(expected_point, point);

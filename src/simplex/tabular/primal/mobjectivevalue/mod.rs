@@ -9,7 +9,8 @@ use std::{
 use fraction::{Signed, Zero};
 
 use crate::simplex::{
-    objectivevalue::ObjectiveValue, rowvalue::Row, value, Coefficients, Constraint, Operator, Value,
+    objectivevalue::ObjectiveValue, rowvalue::Row, value, value::Value, Coefficients, Constraint,
+    Operator,
 };
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -122,10 +123,9 @@ impl Display for MObjectiveValue {
     }
 }
 
-use crate::simplex::rowvalue::RowValue;
-impl RowValue for MObjectiveValue {}
-
-fn find_equality_constraint(functional_constraints: &Vec<Constraint>) -> Option<Constraint> {
+fn find_equality_constraint(
+    functional_constraints: &Vec<Constraint<Value>>,
+) -> Option<Constraint<Value>> {
     for constraint in functional_constraints {
         match constraint.operator {
             Operator::EQUAL => return Some(constraint.clone()),
@@ -136,8 +136,8 @@ fn find_equality_constraint(functional_constraints: &Vec<Constraint>) -> Option<
 }
 
 fn initial_objective_coeffs(
-    coeffs: &Coefficients,
-    equality_constraint_opt: &Option<Constraint>,
+    coeffs: &Coefficients<Value>,
+    equality_constraint_opt: &Option<Constraint<Value>>,
 ) -> Vec<MObjectiveValue> {
     let mut obj_coeffs = vec![MObjectiveValue::zero(); coeffs.len()];
     for i in 0..coeffs.len() {
@@ -155,14 +155,14 @@ fn initial_objective_coeffs(
     obj_coeffs
 }
 
-impl ObjectiveValue for MObjectiveValue {
+impl ObjectiveValue<Value> for MObjectiveValue {
     fn is_optimal(&self) -> bool {
         *self >= MObjectiveValue::zero()
     }
 
     fn initial_objective_equation(
-        objective_fn_coeffs: &Coefficients,
-        functional_constraints: &Vec<Constraint>,
+        objective_fn_coeffs: &Coefficients<Value>,
+        functional_constraints: &Vec<Constraint<Value>>,
     ) -> Row<Self> {
         let nonbasic_var_count = functional_constraints.len();
         let equality_constraint_opt = find_equality_constraint(functional_constraints);

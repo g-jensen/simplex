@@ -3,18 +3,17 @@ mod test;
 
 pub mod mobjectivevalue;
 
-use fraction::Fraction;
+use std::ops::{Add, Mul, Neg};
 
 use super::{Equation, Problem, ProblemObserver};
 use crate::simplex::objectivevalue::ObjectiveValue;
 use crate::simplex::rowvalue::{Row, RowValue};
-use crate::simplex::value::Value;
-use crate::simplex::{value, Coefficients, Variable};
+use crate::simplex::{Coefficients, Variable};
 
-pub fn solve<O: ObjectiveValue>(
-    mut problem: Problem<O>,
-    observer: &mut impl ProblemObserver<O>,
-) -> Coefficients {
+pub fn solve<R: RowValue, O: ObjectiveValue<R>>(
+    mut problem: Problem<R, O>,
+    observer: &mut impl ProblemObserver<R, O>,
+) -> Coefficients<R> {
     while !is_optimal(&problem) {
         let Some(pivot_variable) = pivot_variable(&problem) else {
             return problem.point;
@@ -33,7 +32,7 @@ pub fn solve<O: ObjectiveValue>(
     return problem.point;
 }
 
-fn is_optimal<O: ObjectiveValue>(problem: &Problem<O>) -> bool {
+fn is_optimal<R: RowValue, O: ObjectiveValue<R>>(problem: &Problem<R, O>) -> bool {
     problem
         .objective_equation
         .coefficients
@@ -41,7 +40,7 @@ fn is_optimal<O: ObjectiveValue>(problem: &Problem<O>) -> bool {
         .all(|v| v.is_optimal())
 }
 
-fn pivot_variable<O: ObjectiveValue>(problem: &Problem<O>) -> Option<Variable> {
+fn pivot_variable<R: RowValue, O: ObjectiveValue<R>>(problem: &Problem<R, O>) -> Option<Variable> {
     problem
         .objective_equation
         .coefficients
@@ -52,33 +51,37 @@ fn pivot_variable<O: ObjectiveValue>(problem: &Problem<O>) -> Option<Variable> {
         .0
 }
 
-fn set_ratios<O: ObjectiveValue>(problem: &mut Problem<O>, pivot_column: Variable) {
+fn set_ratios<R: RowValue, O: ObjectiveValue<R>>(
+    problem: &mut Problem<R, O>,
+    pivot_column: Variable,
+) {
     for row in &mut problem.rows {
-        row.ratio = row.equation.constraint.clone()
-            / row.equation.coefficients[pivot_column.clone()].clone();
+        row.ratio =
+            row.equation.constraint.clone() / row.equation.coefficients[pivot_column].clone();
     }
 }
 
-fn pivot_row_idx<O: ObjectiveValue>(problem: &Problem<O>) -> Option<usize> {
+fn pivot_row_idx<R: RowValue, O: ObjectiveValue<R>>(problem: &Problem<R, O>) -> Option<usize> {
     problem
         .rows
         .iter()
         .enumerate()
-        .filter(|(_, row)| {
-            row.ratio > value::zero()
-                && row.ratio != Value::from(Fraction::Infinity(fraction::Sign::Plus))
-        })
+        .filter(|(_, row)| row.ratio > R::zero() && row.ratio.is_finite())
         .min_by(|(_, r1), (_, r2)| r1.ratio.cmp(&r2.ratio))
         .unzip()
         .0
 }
 
-fn set_basic_variable<O: ObjectiveValue>(problem: &mut Problem<O>, var_idx: usize, new_var: usize) {
+fn set_basic_variable<R: RowValue, O: ObjectiveValue<R>>(
+    problem: &mut Problem<R, O>,
+    var_idx: usize,
+    new_var: usize,
+) {
     problem.rows[var_idx].basic_variable = new_var;
 }
 
-fn normalize_equation<O: ObjectiveValue>(
-    problem: &mut Problem<O>,
+fn normalize_equation<R: RowValue, O: ObjectiveValue<R>>(
+    problem: &mut Problem<R, O>,
     equation_idx: usize,
     variable: Variable,
 ) {
@@ -87,16 +90,17 @@ fn normalize_equation<O: ObjectiveValue>(
     let var_count = coeffs.len();
     for var in 0..var_count {
         if var == variable {
-            coeffs[var] = value::one();
+            coeffs[var] = R::one();
         } else {
-            coeffs[var] /= coeff.clone();
+            coeffs[var] = coeffs[var].clone() / coeff.clone();
         }
     }
-    problem.rows[equation_idx].equation.constraint /= coeff;
+    let constraint = &mut problem.rows[equation_idx].equation.constraint;
+    *constraint = constraint.clone() / coeff;
 }
 
-fn reduce_equations<O: ObjectiveValue>(
-    problem: &mut Problem<O>,
+fn reduce_equations<R: RowValue, O: ObjectiveValue<R>>(
+    problem: &mut Problem<R, O>,
     pivot_row_idx: usize,
     variable: Variable,
 ) {
@@ -117,7 +121,10 @@ fn iter_around_mut<T>(slice: &mut [T], index: usize) -> (&mut T, impl Iterator<I
     (item, before.iter_mut().chain(after.iter_mut()))
 }
 
-fn reduce_row<R: RowValue>(row: &mut Row<R>, pivot_equation: &Equation, variable: Variable) {
+fn reduce_row<T, R: RowValue>(row: &mut Row<T>, pivot_equation: &Equation<R>, variable: Variable)
+where
+    T: Clone + Add<Output = T> + Neg<Output = T> + Mul<R, Output = T>,
+{
     let factor = row.coefficients[variable].clone();
     for (k, coeff) in row.coefficients.iter_mut().enumerate() {
         *coeff = coeff.clone() + -(factor.clone() * pivot_equation.coefficients[k].clone());
@@ -125,8 +132,8 @@ fn reduce_row<R: RowValue>(row: &mut Row<R>, pivot_equation: &Equation, variable
     row.constraint = row.constraint.clone() + -(factor * pivot_equation.constraint.clone());
 }
 
-fn set_new_point<O: ObjectiveValue>(problem: &mut Problem<O>) {
-    problem.point.fill(value::zero());
+fn set_new_point<R: RowValue, O: ObjectiveValue<R>>(problem: &mut Problem<R, O>) {
+    problem.point.fill(R::zero());
     for row in problem.rows.iter() {
         problem.point[row.basic_variable] = row.equation.constraint.clone();
     }

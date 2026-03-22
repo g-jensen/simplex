@@ -17,8 +17,9 @@ use crate::simplex::tabular::primal::{self as sut};
 use crate::simplex::tabular::{EmptyObserver, Equation, Problem, ProblemObserver, SimplexRow};
 use crate::simplex::test::{equality_constraint, frac, upper_bound_constraint};
 use crate::simplex::value;
+use crate::simplex::value::Value;
 
-pub type MProblem = Problem<MObjectiveValue>;
+pub type MProblem = Problem<Value, MObjectiveValue>;
 pub type MObjectiveEquation = Row<MObjectiveValue>;
 
 struct MockObserver {
@@ -33,7 +34,7 @@ impl MockObserver {
     }
 }
 
-impl ProblemObserver<MObjectiveValue> for MockObserver {
+impl ProblemObserver<Value, MObjectiveValue> for MockObserver {
     fn observe(&mut self, problem: MProblem) {
         self.observations.push(problem);
     }
