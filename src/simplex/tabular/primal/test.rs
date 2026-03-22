@@ -10,7 +10,7 @@ mod normalize_equation;
 
 mod reduce_equations;
 
-use crate::simplex::objectivevalue::ObjectiveEquation;
+use crate::simplex::rowvalue::Row;
 use crate::simplex::tabular::primal::mobjectivevalue::test::mvalue_from_m;
 use crate::simplex::tabular::primal::mobjectivevalue::MObjectiveValue;
 use crate::simplex::tabular::primal::{self as sut};
@@ -19,7 +19,7 @@ use crate::simplex::test::{equality_constraint, frac, upper_bound_constraint};
 use crate::simplex::value;
 
 pub type MProblem = Problem<MObjectiveValue>;
-pub type MObjectiveEquation = ObjectiveEquation<MObjectiveValue>;
+pub type MObjectiveEquation = Row<MObjectiveValue>;
 
 struct MockObserver {
     observations: Vec<MProblem>,

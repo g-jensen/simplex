@@ -6,8 +6,8 @@ pub mod mobjectivevalue;
 use fraction::Fraction;
 
 use super::{Equation, Problem, ProblemObserver};
-
-use crate::simplex::objectivevalue::{ObjectiveEquation, ObjectiveValue};
+use crate::simplex::objectivevalue::ObjectiveValue;
+use crate::simplex::rowvalue::{Row, RowValue};
 use crate::simplex::value::Value;
 use crate::simplex::{value, Coefficients, Variable};
 
@@ -102,9 +102,9 @@ fn reduce_equations<O: ObjectiveValue>(
 ) {
     let (pivot_row, other_rows) = iter_around_mut(&mut problem.rows, pivot_row_idx);
     for row in other_rows {
-        reduce_equation(&mut row.equation, &pivot_row.equation, variable);
+        reduce_row(&mut row.equation, &pivot_row.equation, variable);
     }
-    reduce_objective_equation(
+    reduce_row(
         &mut problem.objective_equation,
         &pivot_row.equation,
         variable,
@@ -117,26 +117,12 @@ fn iter_around_mut<T>(slice: &mut [T], index: usize) -> (&mut T, impl Iterator<I
     (item, before.iter_mut().chain(after.iter_mut()))
 }
 
-fn reduce_equation(equation: &mut Equation, pivot_equation: &Equation, variable: Variable) {
-    let factor = equation.coefficients[variable].clone();
-    for (k, coeff) in equation.coefficients.iter_mut().enumerate() {
+fn reduce_row<R: RowValue>(row: &mut Row<R>, pivot_equation: &Equation, variable: Variable) {
+    let factor = row.coefficients[variable].clone();
+    for (k, coeff) in row.coefficients.iter_mut().enumerate() {
         *coeff = coeff.clone() + -(factor.clone() * pivot_equation.coefficients[k].clone());
     }
-    equation.constraint =
-        equation.constraint.clone() + -(factor * pivot_equation.constraint.clone());
-}
-
-fn reduce_objective_equation<O: ObjectiveValue>(
-    equation: &mut ObjectiveEquation<O>,
-    pivot_equation: &Equation,
-    variable: Variable,
-) {
-    let factor = equation.coefficients[variable].clone();
-    for (k, coeff) in equation.coefficients.iter_mut().enumerate() {
-        *coeff = coeff.clone() + -(factor.clone() * pivot_equation.coefficients[k].clone());
-    }
-    equation.constraint =
-        equation.constraint.clone() + -(factor * pivot_equation.constraint.clone());
+    row.constraint = row.constraint.clone() + -(factor * pivot_equation.constraint.clone());
 }
 
 fn set_new_point<O: ObjectiveValue>(problem: &mut Problem<O>) {

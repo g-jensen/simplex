@@ -5,15 +5,12 @@ pub mod dual;
 pub mod primal;
 pub mod write_observer;
 
-use crate::simplex::objectivevalue::{ObjectiveEquation, ObjectiveValue};
+use crate::simplex::objectivevalue::ObjectiveValue;
+use crate::simplex::rowvalue::Row;
 use crate::simplex::value::Value;
 use crate::simplex::{value, Coefficients, Constraint, Variable};
 
-#[derive(PartialEq, Debug, Clone)]
-pub struct Equation {
-    pub coefficients: Coefficients,
-    pub constraint: Value,
-}
+pub type Equation = Row<Value>;
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct SimplexRow {
@@ -24,7 +21,7 @@ pub struct SimplexRow {
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Problem<O: ObjectiveValue> {
-    pub objective_equation: ObjectiveEquation<O>,
+    pub objective_equation: Row<O>,
     pub rows: Vec<SimplexRow>,
     pub point: Coefficients,
 }

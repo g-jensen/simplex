@@ -4,6 +4,7 @@ use crate::simplex::value::Value;
 mod test;
 
 pub mod objectivevalue;
+pub mod rowvalue;
 pub mod tabular;
 pub mod value;
 

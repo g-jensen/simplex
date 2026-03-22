@@ -9,8 +9,7 @@ use std::{
 use fraction::{Signed, Zero};
 
 use crate::simplex::{
-    objectivevalue::{ObjectiveEquation, ObjectiveValue},
-    value, Coefficients, Constraint, Operator, Value,
+    objectivevalue::ObjectiveValue, rowvalue::Row, value, Coefficients, Constraint, Operator, Value,
 };
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -123,6 +122,9 @@ impl Display for MObjectiveValue {
     }
 }
 
+use crate::simplex::rowvalue::RowValue;
+impl RowValue for MObjectiveValue {}
+
 fn find_equality_constraint(functional_constraints: &Vec<Constraint>) -> Option<Constraint> {
     for constraint in functional_constraints {
         match constraint.operator {
@@ -161,13 +163,13 @@ impl ObjectiveValue for MObjectiveValue {
     fn initial_objective_equation(
         objective_fn_coeffs: &Coefficients,
         functional_constraints: &Vec<Constraint>,
-    ) -> ObjectiveEquation<Self> {
+    ) -> Row<Self> {
         let nonbasic_var_count = functional_constraints.len();
         let equality_constraint_opt = find_equality_constraint(functional_constraints);
         let mut coefficients =
             initial_objective_coeffs(objective_fn_coeffs, &equality_constraint_opt);
         coefficients.append(&mut vec![MObjectiveValue::zero(); nonbasic_var_count]);
-        ObjectiveEquation {
+        Row {
             coefficients: coefficients,
             constraint: match equality_constraint_opt {
                 Some(equality_constraint) => {

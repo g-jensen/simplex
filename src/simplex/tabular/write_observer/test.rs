@@ -1,4 +1,4 @@
-use crate::simplex::objectivevalue::ObjectiveEquation;
+use crate::simplex::rowvalue::Row;
 use crate::simplex::tabular::primal::mobjectivevalue::test::mvalue_from;
 use crate::simplex::tabular::primal::mobjectivevalue::MObjectiveValue;
 use crate::simplex::tabular::write_observer::{self as sut};
@@ -6,7 +6,7 @@ use crate::simplex::tabular::{Equation, Problem, ProblemObserver, SimplexRow};
 use crate::simplex::test::frac;
 
 type MProblem = Problem<MObjectiveValue>;
-type MObjectiveEquation = ObjectiveEquation<MObjectiveValue>;
+type MObjectiveEquation = Row<MObjectiveValue>;
 
 fn make_one_variable_problem() -> MProblem {
     MProblem {
