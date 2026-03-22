@@ -39,8 +39,19 @@ impl sut::ProblemObserver for MockObserver {
 
 pub fn upper_bound_constraint(
     coefficients: sut::Coefficients,
-    bound: Value) -> sut::UpperBoundConstraint {
-    sut::UpperBoundConstraint {
+    bound: Value) -> sut::Constraint {
+    sut::Constraint {
+        operator: sut::Operator::LESSTHANEQUAL,
+        coefficients,
+        bound,
+    }
+}
+
+pub fn equality_constraint(
+    coefficients: sut::Coefficients,
+    bound: Value) -> sut::Constraint {
+    sut::Constraint {
+        operator: sut::Operator::EQUAL,
         coefficients,
         bound,
     }
@@ -191,6 +202,60 @@ fn solves_big_m_problem() {
     let solns = sut::solve(problem,&mut EmptyObserver::new());
     let expected_solns = vec![frac(3,1), value::zero(), frac(1,1), value::zero()];
     assert_eq!(expected_solns, solns);
+}
+
+#[test]
+fn creates_big_m_problem() {
+    let objective_function = vec![frac(2,1), frac(3,1)];
+    let fn_constaint_0 = upper_bound_constraint(vec![frac(1,1), frac(2,1)], frac(4,1));
+    let fn_constaint_1 = equality_constraint(vec![frac(1,1), frac(2,1)], frac(3,1));
+    let fn_constraints = vec![fn_constaint_0, fn_constaint_1];
+
+    let problem = sut::Problem::new(&objective_function,&fn_constraints);
+    let expected_problem = sut::Problem{
+        objective_equation: sut::ObjectiveEquation{
+            coefficients: vec![
+                zfrac_m(-frac(2,1), -frac(1,1)),
+                zfrac_m(-frac(3,1), -frac(2,1)),
+                ZValue::zero(),
+                ZValue::zero()
+            ],
+            constraint: zfrac_m(value::zero(),-frac(3,1))
+        },
+        rows: vec![
+            sut::SimplexRow{
+                basic_variable: 2,
+                equation: sut::Equation{
+                    coefficients: vec![
+                        frac(1,1),
+                        frac(2,1),
+                        frac(1,1),
+                        value::zero()
+                    ],
+                    constraint: frac(4,1)
+                },
+                ratio: value::zero()
+            },
+            sut::SimplexRow{
+                basic_variable: 3,
+                equation: sut::Equation{
+                    coefficients: vec![
+                        frac(1,1),
+                        frac(2,1),
+                        value::zero(),
+                        frac(1,1)
+                    ],
+                    constraint: frac(3,1)
+                },
+                ratio: value::zero()
+            }
+        ],
+        point: vec![value::zero(),value::zero(),frac(4,1),frac(3,1)]
+    };
+    assert_eq!(expected_problem.objective_equation,problem.objective_equation);
+    assert_eq!(expected_problem.point,problem.point);
+    assert_eq!(expected_problem.rows,problem.rows);
+    assert_eq!(expected_problem,problem);
 }
 
 #[test]

@@ -11,7 +11,15 @@ use crate::simplex::value;
 pub type Coefficients = Vec<Value>;
 pub type Variable = usize;
 
-pub struct UpperBoundConstraint {
+#[derive(Clone)]
+pub enum Operator {
+    LESSTHANEQUAL,
+    EQUAL
+}
+
+#[derive(Clone)]
+pub struct Constraint {
+    pub operator: Operator,
     pub coefficients: Coefficients,
     pub bound: Value
 }
@@ -63,13 +71,12 @@ impl EmptyObserver {
 impl Problem {
     pub fn new(
         objective_coeffs: &Coefficients,
-        functional_constraints: &Vec<UpperBoundConstraint>,
+        functional_constraints: &Vec<Constraint>,
     ) -> Self {
-        let objective_coeffs = initial_objective_coeffs(objective_coeffs);
         Self {
             objective_equation: initial_objective_equation(
-                &objective_coeffs,
-                functional_constraints.len(),
+                objective_coeffs,
+                functional_constraints
             ),
             rows: initial_rows(&functional_constraints, objective_coeffs.len()),
             point: initial_point(&objective_coeffs, functional_constraints),
@@ -77,31 +84,51 @@ impl Problem {
     }
 }
 
-fn initial_objective_coeffs(coeffs: &Coefficients) -> ObjectiveCoefficients {
-    let mut obj_coeffs = vec![];
-    for coeff in coeffs {
-        obj_coeffs.push(ZValue::from(coeff.clone()));
+fn find_equality_constraint(functional_constraints: &Vec<Constraint>) -> Option<Constraint> {
+    for constraint in functional_constraints {
+        match constraint.operator {
+            Operator::EQUAL => {return Some(constraint.clone())}
+            _ => {}
+        }
+    }
+    return None
+}
+
+fn initial_objective_coeffs(coeffs: &Coefficients, equality_constraint_opt: &Option<Constraint>) -> ObjectiveCoefficients {
+    let mut obj_coeffs = vec![ZValue::zero(); coeffs.len()];
+    for i in 0..coeffs.len() {
+        obj_coeffs[i] = -ZValue::from(coeffs[i].clone());
+    }
+    match equality_constraint_opt {
+        Some(equality_constraint) => {
+            for i in 0..equality_constraint.coefficients.len() {
+                obj_coeffs[i] = obj_coeffs[i].clone() + -ZValue::from_m(value::zero(),equality_constraint.coefficients[i])
+            }
+        }
+        None => {}
     }
     obj_coeffs
 }
 
 fn initial_objective_equation(
-    objective_fn_coeffs: &ObjectiveCoefficients,
-    nonbasic_var_count: usize,
+    objective_fn_coeffs: &Coefficients,
+    functional_constraints: &Vec<Constraint>,
 ) -> ObjectiveEquation {
-    let mut coefficients = objective_fn_coeffs.clone();
-    for coeff in &mut coefficients {
-        *coeff = -coeff.clone();
-    }
+    let nonbasic_var_count = functional_constraints.len();
+    let equality_constraint_opt = find_equality_constraint(functional_constraints);
+    let mut coefficients = initial_objective_coeffs(objective_fn_coeffs,&equality_constraint_opt);
     coefficients.append(&mut vec![ZValue::zero(); nonbasic_var_count]);
     ObjectiveEquation {
         coefficients: coefficients,
-        constraint: ZValue::zero(),
+        constraint: match equality_constraint_opt {
+            Some(equality_constraint) => -ZValue::from_m(value::zero(),equality_constraint.bound),
+            None => ZValue::zero(),
+        },
     }
 }
 
 fn initial_rows(
-    functional_constraints: &Vec<UpperBoundConstraint>,
+    functional_constraints: &Vec<Constraint>,
     nonbasic_var_count: usize,
 ) -> Vec<SimplexRow> {
     let mut rows = vec![];
@@ -116,8 +143,9 @@ fn initial_rows(
     rows
 }
 
+// reconcile with test::equality_constraint. maybe merge Equation into Condition?
 fn equality_constraint(
-    constraint: &UpperBoundConstraint,
+    constraint: &Constraint,
     target_var: Variable,
     basic_var_count: usize,
 ) -> Equation {
@@ -145,8 +173,8 @@ fn with_slack_variable(
 }
 
 fn initial_point(
-    objective_fn_coeffs: &ObjectiveCoefficients,
-    constraints: &Vec<UpperBoundConstraint>,
+    objective_fn_coeffs: &Coefficients,
+    constraints: &Vec<Constraint>,
 ) -> Coefficients {
     let mut point = vec![value::zero(); objective_fn_coeffs.len()];
     for constraint in constraints {
