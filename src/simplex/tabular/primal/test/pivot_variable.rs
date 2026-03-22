@@ -1,5 +1,5 @@
 mod pivot_variable {
-    use crate::simplex::tabular::primal::{self as sut, mvalue::test::mvalue_from};
+    use crate::simplex::tabular::primal::{self as sut, mobjectivevalue::test::mvalue_from};
 
     #[test]
     fn empty_objective_has_no_pivot() {

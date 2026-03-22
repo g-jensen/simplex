@@ -8,26 +8,26 @@ use fraction::{Signed, Zero};
 use crate::simplex::{Value, value};
 
 #[derive(Clone,Debug,PartialEq,Eq)]
-pub struct MValue {
+pub struct MObjectiveValue {
     finite: Value,
     m: Value
 }
 
-impl MValue {
-    pub fn from(finite: Value) -> MValue {
-        MValue { finite: finite, m: value::zero() }
+impl MObjectiveValue {
+    pub fn from(finite: Value) -> MObjectiveValue {
+        MObjectiveValue { finite: finite, m: value::zero() }
     }
 
-    pub fn from_m(finite: Value, m: Value) -> MValue {
-        MValue { finite: finite, m: m }
+    pub fn from_m(finite: Value, m: Value) -> MObjectiveValue {
+        MObjectiveValue { finite: finite, m: m }
     }
 
-    pub fn zero() -> MValue {
-        MValue::from(value::zero())
+    pub fn zero() -> MObjectiveValue {
+        MObjectiveValue::from(value::zero())
     }
 }
 
-impl PartialOrd for MValue {
+impl PartialOrd for MObjectiveValue {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         match self.m.partial_cmp(&other.m) {
             Some(core::cmp::Ordering::Equal) => {}
@@ -37,7 +37,7 @@ impl PartialOrd for MValue {
     }
 }
 
-impl Ord for MValue {
+impl Ord for MObjectiveValue {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         match self.m.cmp(&other.m) {
             core::cmp::Ordering::Equal => {}
@@ -47,51 +47,51 @@ impl Ord for MValue {
     }
 }
 
-impl Add for MValue {
-    type Output = MValue;
+impl Add for MObjectiveValue {
+    type Output = MObjectiveValue;
 
-    fn add(self, rhs: MValue) -> Self::Output {
-        MValue{
+    fn add(self, rhs: MObjectiveValue) -> Self::Output {
+        MObjectiveValue{
             finite: self.finite + rhs.finite,
             m : self.m + rhs.m
         }
     }
 }
 
-impl Neg for MValue {
-    type Output = MValue;
+impl Neg for MObjectiveValue {
+    type Output = MObjectiveValue;
 
     fn neg(self) -> Self::Output {
-        MValue{
+        MObjectiveValue{
             finite: self.finite.neg(),
             m: self.m.neg()
         }
     }
 }
 
-impl Mul<Value> for MValue {
-    type Output = MValue;
+impl Mul<Value> for MObjectiveValue {
+    type Output = MObjectiveValue;
 
     fn mul(self, rhs: Value) -> Self::Output {
-        MValue{
+        MObjectiveValue{
             finite: self.finite * rhs,
             m : self.m * rhs
         }
     }
 }
 
-impl Div<Value> for MValue {
-    type Output = MValue;
+impl Div<Value> for MObjectiveValue {
+    type Output = MObjectiveValue;
 
     fn div(self, rhs: Value) -> Self::Output {
-        MValue{
+        MObjectiveValue{
             finite: self.finite / rhs,
             m : self.m / rhs
         }
     }
 }
 
-impl Display for MValue {
+impl Display for MObjectiveValue {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.m.is_zero() {
             self.finite.fmt(f)

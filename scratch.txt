@@ -1,0 +1,137 @@
+SimplexProblem {
+    objective_equation: Equation {
+        coefficients: [
+            -1.0,
+            -1.0,
+            0.0,
+            0.0,
+        ],
+        constraint: 0.0,
+    },
+    rows: [
+        SimplexRow {
+            basic_variable: 2,
+            equation: Equation {
+                coefficients: [
+                    2.0,
+                    0.0,
+                    1.0,
+                    0.0,
+                ],
+                constraint: 6.0,
+            },
+            ratio: 0.0,
+        },
+        SimplexRow {
+            basic_variable: 3,
+            equation: Equation {
+                coefficients: [
+                    0.0,
+                    4.0,
+                    0.0,
+                    1.0,
+                ],
+                constraint: 8.0,
+            },
+            ratio: 0.0,
+        },
+    ],
+    point: [
+        0.0,
+        0.0,
+        6.0,
+        8.0,
+    ],
+}
+SimplexProblem {
+    objective_equation: Equation {
+        coefficients: [
+            0.0,
+            -1.0,
+            0.5,
+            0.0,
+        ],
+        constraint: 3.0,
+    },
+    rows: [
+        SimplexRow {
+            basic_variable: 0,
+            equation: Equation {
+                coefficients: [
+                    1.0,
+                    0.0,
+                    0.5,
+                    0.0,
+                ],
+                constraint: 3.0,
+            },
+            ratio: 3.0,
+        },
+        SimplexRow {
+            basic_variable: 3,
+            equation: Equation {
+                coefficients: [
+                    0.0,
+                    4.0,
+                    0.0,
+                    1.0,
+                ],
+                constraint: 8.0,
+            },
+            ratio: inf,
+        },
+    ],
+    point: [
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+    ],
+}
+SimplexProblem {
+    objective_equation: Equation {
+        coefficients: [
+            0.0,
+            0.0,
+            0.5,
+            0.25,
+        ],
+        constraint: 5.0,
+    },
+    rows: [
+        SimplexRow {
+            basic_variable: 0,
+            equation: Equation {
+                coefficients: [
+                    1.0,
+                    0.0,
+                    0.5,
+                    0.0,
+                ],
+                constraint: 3.0,
+            },
+            ratio: inf,
+        },
+        SimplexRow {
+            basic_variable: 1,
+            equation: Equation {
+                coefficients: [
+                    0.0,
+                    1.0,
+                    0.0,
+                    0.25,
+                ],
+                constraint: 2.0,
+            },
+            ratio: 2.0,
+        },
+    ],
+    point: [
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+    ],
+}
+
+42

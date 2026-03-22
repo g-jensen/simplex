@@ -12,10 +12,10 @@ mod normalize_equation;
 
 mod reduce_equations;
 
-use crate::simplex::tabular::primal::mvalue::test::mvalue_from_m;
+use crate::simplex::tabular::primal::mobjectivevalue::test::mvalue_from_m;
 use crate::simplex::{Coefficients, Constraint, Operator, value};
 use crate::simplex::value::Value;
-use crate::simplex::tabular::primal::mvalue::{MValue};
+use crate::simplex::tabular::primal::mobjectivevalue::{MObjectiveValue};
 use crate::simplex::tabular::primal::{self as sut, EmptyObserver};
 use crate::simplex::{
     test::frac,
@@ -166,8 +166,8 @@ fn solves_big_m_problem() {
             coefficients: vec![
                 mvalue_from_m(-frac(2,1), -frac(2,1)),
                 mvalue_from_m(-frac(3,1), -frac(1,1)),
-                MValue::zero(),
-                MValue::zero()
+                MObjectiveValue::zero(),
+                MObjectiveValue::zero()
             ],
             constraint: mvalue_from_m(value::zero(),-frac(3,1))
         },
@@ -219,8 +219,8 @@ fn creates_big_m_problem() {
             coefficients: vec![
                 mvalue_from_m(-frac(2,1), -frac(1,1)),
                 mvalue_from_m(-frac(3,1), -frac(2,1)),
-                MValue::zero(),
-                MValue::zero()
+                MObjectiveValue::zero(),
+                MObjectiveValue::zero()
             ],
             constraint: mvalue_from_m(value::zero(),-frac(3,1))
         },

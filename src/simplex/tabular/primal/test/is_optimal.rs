@@ -1,6 +1,6 @@
 mod is_optimal {
     use crate::simplex::{
-        tabular::primal::{self as sut, {ObjectiveEquation, Problem}, mvalue::test::mvalue_from},
+        tabular::primal::{self as sut, {ObjectiveEquation, Problem}, mobjectivevalue::test::mvalue_from},
     };
 
     #[test]

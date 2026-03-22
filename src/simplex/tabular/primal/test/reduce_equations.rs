@@ -1,6 +1,6 @@
 mod reduce_equations {
     use crate::simplex::{
-        tabular::primal::{self as sut, mvalue::test::mvalue_from},
+        tabular::primal::{self as sut, mobjectivevalue::test::mvalue_from},
         test::frac,
     };
 
