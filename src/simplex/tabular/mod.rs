@@ -1,3 +1,6 @@
+#[cfg(test)]
+mod test;
+
 pub mod dual;
 pub mod primal;
 pub mod write_observer;

@@ -1,5 +1,3 @@
-mod initial_point;
-
 mod is_optimal;
 
 mod pivot_variable;
@@ -17,9 +15,8 @@ use crate::simplex::tabular::primal::mobjectivevalue::test::mvalue_from_m;
 use crate::simplex::tabular::primal::mobjectivevalue::MObjectiveValue;
 use crate::simplex::tabular::primal::{self as sut};
 use crate::simplex::tabular::{EmptyObserver, Equation, Problem, ProblemObserver, SimplexRow};
-use crate::simplex::test::frac;
-use crate::simplex::value::Value;
-use crate::simplex::{value, Coefficients, Constraint, Operator};
+use crate::simplex::test::{equality_constraint, frac, upper_bound_constraint};
+use crate::simplex::value;
 
 pub type MProblem = Problem<MObjectiveValue>;
 pub type MObjectiveEquation = ObjectiveEquation<MObjectiveValue>;
@@ -39,22 +36,6 @@ impl MockObserver {
 impl ProblemObserver<MObjectiveValue> for MockObserver {
     fn observe(&mut self, problem: MProblem) {
         self.observations.push(problem);
-    }
-}
-
-pub fn upper_bound_constraint(coefficients: Coefficients, bound: Value) -> Constraint {
-    Constraint {
-        operator: Operator::LESSTHANEQUAL,
-        coefficients,
-        bound,
-    }
-}
-
-pub fn equality_constraint(coefficients: Coefficients, bound: Value) -> Constraint {
-    Constraint {
-        operator: Operator::EQUAL,
-        coefficients,
-        bound,
     }
 }
 
