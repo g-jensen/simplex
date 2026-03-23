@@ -5,9 +5,14 @@ pub mod mobjectivevalue;
 
 use super::{Problem, ProblemObserver};
 use crate::simplex::objectivevalue::ObjectiveValue;
-use crate::simplex::rowvalue::{RowValue};
+use crate::simplex::rowvalue::{Row, RowValue};
 use crate::simplex::tabular;
+use crate::simplex::tabular::primal::mobjectivevalue::MObjectiveValue;
+use crate::simplex::value::Value;
 use crate::simplex::{Coefficients, Variable};
+
+pub type PrimalProblem = Problem<Value, MObjectiveValue>;
+pub type MObjectiveEquation = Row<MObjectiveValue>;
 
 pub fn solve<R: RowValue, O: ObjectiveValue<R>>(
     mut problem: Problem<R, O>,

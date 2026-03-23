@@ -1,17 +1,14 @@
 mod set_ratios {
     use crate::simplex::{
-        tabular::primal::{
-            self as sut,
-            mobjectivevalue::test::mvalue_from,
-            test::{MObjectiveEquation, MProblem},
-        },
-        tabular::{Equation, SimplexRow},
+        tabular::{Equation, SimplexRow, primal::{
+            self as sut, MObjectiveEquation, PrimalProblem, mobjectivevalue::test::mvalue_from
+        }},
         test::frac,
     };
 
     #[test]
     fn recalculates_ratio_for_row() {
-        let mut problem = MProblem {
+        let mut problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
@@ -32,7 +29,7 @@ mod set_ratios {
 
     #[test]
     fn recalculates_ratio_for_rows() {
-        let mut problem = MProblem {
+        let mut problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
@@ -64,7 +61,7 @@ mod set_ratios {
 
     #[test]
     fn recalculates_ratio_for_specified_var() {
-        let mut problem = MProblem {
+        let mut problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),

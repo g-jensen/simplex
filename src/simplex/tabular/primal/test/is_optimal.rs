@@ -1,13 +1,11 @@
 mod is_optimal {
     use crate::simplex::tabular::primal::{
-        self as sut,
-        mobjectivevalue::test::mvalue_from,
-        test::{MObjectiveEquation, MProblem},
+        self as sut, MObjectiveEquation, PrimalProblem, mobjectivevalue::test::mvalue_from
     };
 
     #[test]
     fn empty_objective_is_optimal() {
-        let problem = MProblem {
+        let problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
@@ -20,7 +18,7 @@ mod is_optimal {
 
     #[test]
     fn positive_objective_is_optimal() {
-        let problem = MProblem {
+        let problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![mvalue_from(1, 1)],
                 constraint: mvalue_from(0, 1),
@@ -33,7 +31,7 @@ mod is_optimal {
 
     #[test]
     fn zero_objective_is_optimal() {
-        let problem = MProblem {
+        let problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![mvalue_from(0, 1)],
                 constraint: mvalue_from(0, 1),
@@ -46,7 +44,7 @@ mod is_optimal {
 
     #[test]
     fn positive_and_zero_objective_is_optimal() {
-        let problem = MProblem {
+        let problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![mvalue_from(1, 1), mvalue_from(0, 1)],
                 constraint: mvalue_from(0, 1),
@@ -59,7 +57,7 @@ mod is_optimal {
 
     #[test]
     fn negative_objective_is_not_optimal() {
-        let problem = MProblem {
+        let problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![-mvalue_from(1, 1)],
                 constraint: mvalue_from(0, 1),
@@ -72,7 +70,7 @@ mod is_optimal {
 
     #[test]
     fn one_negative_in_objective_is_not_optimal() {
-        let problem = MProblem {
+        let problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![-mvalue_from(1, 1), mvalue_from(0, 1)],
                 constraint: mvalue_from(0, 1),

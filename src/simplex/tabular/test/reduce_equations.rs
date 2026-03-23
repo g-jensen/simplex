@@ -1,16 +1,12 @@
 mod reduce_equations {
     use crate::simplex::{
-        tabular::{self as sut, primal::{
-            mobjectivevalue::test::mvalue_from,
-            test::{MObjectiveEquation, MProblem},
-        }},
-        tabular::{Equation, SimplexRow},
+        tabular::{self as sut, Equation, SimplexRow, primal::{MObjectiveEquation, PrimalProblem, mobjectivevalue::test::mvalue_from}},
         test::frac,
     };
 
     #[test]
     fn reduces_objective_equation() {
-        let mut problem = MProblem {
+        let mut problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![mvalue_from(3, 1), mvalue_from(2, 1)],
                 constraint: mvalue_from(0, 1),
@@ -35,7 +31,7 @@ mod reduce_equations {
 
     #[test]
     fn leaves_pivot_row_unchanged() {
-        let mut problem = MProblem {
+        let mut problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![mvalue_from(1, 1), mvalue_from(1, 1)],
                 constraint: mvalue_from(0, 1),
@@ -60,7 +56,7 @@ mod reduce_equations {
 
     #[test]
     fn reduces_non_pivot_row() {
-        let mut problem = MProblem {
+        let mut problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![mvalue_from(0, 1), mvalue_from(0, 1)],
                 constraint: mvalue_from(0, 1),
@@ -95,7 +91,7 @@ mod reduce_equations {
 
     #[test]
     fn reduces_multiple_non_pivot_rows() {
-        let mut problem = MProblem {
+        let mut problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![mvalue_from(0, 1), mvalue_from(0, 1)],
                 constraint: mvalue_from(0, 1),
@@ -148,7 +144,7 @@ mod reduce_equations {
 
     #[test]
     fn reduces_on_non_first_variable() {
-        let mut problem = MProblem {
+        let mut problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![mvalue_from(2, 1), mvalue_from(4, 1)],
                 constraint: mvalue_from(0, 1),

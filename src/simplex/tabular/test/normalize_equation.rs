@@ -1,16 +1,12 @@
 mod normalize_equation {
     use crate::simplex::{
-        tabular::{self as sut, primal::{
-            mobjectivevalue::test::mvalue_from,
-            test::{MObjectiveEquation, MProblem},
-        }},
-        tabular::{Equation, SimplexRow},
+        tabular::{self as sut, Equation, SimplexRow, primal::{MObjectiveEquation, PrimalProblem, mobjectivevalue::test::mvalue_from}},
         test::frac,
     };
 
     #[test]
     fn sets_single_coefficient_to_one() {
-        let mut problem = MProblem {
+        let mut problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
@@ -31,7 +27,7 @@ mod normalize_equation {
 
     #[test]
     fn divides_other_coefficients_by_pivot() {
-        let mut problem = MProblem {
+        let mut problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
@@ -55,7 +51,7 @@ mod normalize_equation {
 
     #[test]
     fn normalizes_on_non_first_variable() {
-        let mut problem = MProblem {
+        let mut problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
@@ -79,7 +75,7 @@ mod normalize_equation {
 
     #[test]
     fn leaves_other_coefficients_unchanged_when_pivot_is_one() {
-        let mut problem = MProblem {
+        let mut problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
@@ -103,7 +99,7 @@ mod normalize_equation {
 
     #[test]
     fn normalizes_correct_row_when_multiple_rows_exist() {
-        let mut problem = MProblem {
+        let mut problem = PrimalProblem {
             objective_equation: MObjectiveEquation {
                 coefficients: vec![],
                 constraint: mvalue_from(0, 1),
