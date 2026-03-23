@@ -5,6 +5,8 @@ pub mod dual;
 pub mod primal;
 pub mod write_observer;
 
+use std::ops::{Add, Mul, Neg};
+
 use crate::simplex::objectivevalue::ObjectiveValue;
 use crate::simplex::rowvalue::{Row, RowValue};
 use crate::simplex::{Coefficients, Constraint, Variable};
@@ -110,4 +112,56 @@ fn initial_point<R: RowValue>(
         point.push(constraint.bound.clone());
     }
     point
+}
+
+fn normalize_equation<R: RowValue, O: ObjectiveValue<R>>(
+    problem: &mut Problem<R, O>,
+    equation_idx: usize,
+    variable: Variable,
+) {
+    let coeffs = &mut problem.rows[equation_idx].equation.coefficients;
+    let coeff = coeffs[variable].clone();
+    let var_count = coeffs.len();
+    for var in 0..var_count {
+        if var == variable {
+            coeffs[var] = R::one();
+        } else {
+            coeffs[var] = coeffs[var].clone() / coeff.clone();
+        }
+    }
+    let constraint = &mut problem.rows[equation_idx].equation.constraint;
+    *constraint = constraint.clone() / coeff;
+}
+
+fn reduce_equations<R: RowValue, O: ObjectiveValue<R>>(
+    problem: &mut Problem<R, O>,
+    pivot_row_idx: usize,
+    variable: Variable,
+) {
+    let (pivot_row, other_rows) = iter_around_mut(&mut problem.rows, pivot_row_idx);
+    for row in other_rows {
+        reduce_row(&mut row.equation, &pivot_row.equation, variable);
+    }
+    reduce_row(
+        &mut problem.objective_equation,
+        &pivot_row.equation,
+        variable,
+    );
+}
+
+fn iter_around_mut<T>(slice: &mut [T], index: usize) -> (&mut T, impl Iterator<Item = &mut T>) {
+    let (before, rest) = slice.split_at_mut(index);
+    let (item, after) = rest.split_first_mut().unwrap();
+    (item, before.iter_mut().chain(after.iter_mut()))
+}
+
+fn reduce_row<T, R: RowValue>(row: &mut Row<T>, pivot_equation: &Equation<R>, variable: Variable)
+where
+    T: Clone + Add<Output = T> + Neg<Output = T> + Mul<R, Output = T>,
+{
+    let factor = row.coefficients[variable].clone();
+    for (k, coeff) in row.coefficients.iter_mut().enumerate() {
+        *coeff = coeff.clone() + -(factor.clone() * pivot_equation.coefficients[k].clone());
+    }
+    row.constraint = row.constraint.clone() + -(factor * pivot_equation.constraint.clone());
 }

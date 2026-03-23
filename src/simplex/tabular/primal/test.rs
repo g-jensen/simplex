@@ -1,20 +1,13 @@
 mod is_optimal;
-
 mod pivot_variable;
-
 mod set_ratios;
-
 mod pivot_row_idx;
-
-mod normalize_equation;
-
-mod reduce_equations;
 
 use crate::simplex::rowvalue::Row;
 use crate::simplex::tabular::primal::mobjectivevalue::test::mvalue_from_m;
 use crate::simplex::tabular::primal::mobjectivevalue::MObjectiveValue;
 use crate::simplex::tabular::primal::{self as sut};
-use crate::simplex::tabular::{EmptyObserver, Equation, Problem, ProblemObserver, SimplexRow};
+use crate::simplex::tabular::{self, EmptyObserver, Equation, Problem, ProblemObserver, SimplexRow};
 use crate::simplex::test::{equality_constraint, frac, upper_bound_constraint};
 use crate::simplex::value;
 use crate::simplex::value::Value;
@@ -246,8 +239,8 @@ fn solve_observes_steps_of_problem() {
     sut::set_ratios(&mut middle_problem, 0);
     let mut solved_problem = middle_problem.clone();
     sut::set_basic_variable(&mut solved_problem, 0, 0);
-    sut::normalize_equation(&mut solved_problem, 0, 0);
-    sut::reduce_equations(&mut solved_problem, 0, 0);
+    tabular::normalize_equation(&mut solved_problem, 0, 0);
+    tabular::reduce_equations(&mut solved_problem, 0, 0);
     sut::set_new_point(&mut solved_problem);
 
     let expected_observations = vec![middle_problem, solved_problem];

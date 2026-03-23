@@ -1,10 +1,9 @@
 mod normalize_equation {
     use crate::simplex::{
-        tabular::primal::{
-            self as sut,
+        tabular::{self as sut, primal::{
             mobjectivevalue::test::mvalue_from,
             test::{MObjectiveEquation, MProblem},
-        },
+        }},
         tabular::{Equation, SimplexRow},
         test::frac,
     };
